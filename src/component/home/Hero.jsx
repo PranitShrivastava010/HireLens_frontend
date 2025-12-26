@@ -16,6 +16,7 @@ export default function Hero() {
         padding: "0 6rem",
         background: "white",
         overflow: "hidden",
+        // marginTop: "5%"
       }}
     >
       {/* Gradient overlay */}
