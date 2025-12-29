@@ -1,6 +1,7 @@
 import { motion as Motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import CommonButton from "../common/CommonButton";
+import { useNavigate } from "react-router-dom";
 
 const ghostBtn = {
   background: "transparent",
@@ -12,6 +13,8 @@ const ghostBtn = {
 
 export default function HomeNavbar() {
   const [expanded, setExpanded] = useState(false);
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const timer = setTimeout(() => setExpanded(true), 400);
@@ -84,7 +87,7 @@ export default function HomeNavbar() {
           {/* Actions */}
           <div style={{ display: "flex", gap: "1rem" }}>
             <button style={ghostBtn}>Login</button>
-            <CommonButton color={"linear-gradient(135deg, #1E2B5C, #27C4D6)"} text={"Get Started"} radius={"30px"}/>
+            <CommonButton color={"linear-gradient(135deg, #1E2B5C, #27C4D6)"} text={"Get Started"} radius={"30px"} onClick={() => navigate("/register")} />
           </div>
         </Motion.div>
       </Motion.div>
