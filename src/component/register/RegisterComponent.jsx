@@ -10,8 +10,14 @@ import {
     Divider,
 } from "@mui/material";
 import CommonButton from "../common/CommonButton";
+import { useNavigate } from "react-router-dom";
 
-export default function RegisterComponent() {
+export default function RegisterComponent({
+    type = "register",
+}) {
+
+    const navigate = useNavigate()
+
     return (
         <Box
             sx={{
@@ -92,8 +98,8 @@ export default function RegisterComponent() {
                                 mb: -3,
                             }}
                         />
-                        <Typography variant="h4" sx={{ mb: 3, fontFamily: "Heading", ml: 10 }}>
-                            Welcome Back!
+                        <Typography variant="h4" sx={{ mb: 3, fontFamily: "Heading", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {type === "login" ? "Login" : "Welcome"}
                         </Typography>
 
                         <Button
@@ -106,16 +112,19 @@ export default function RegisterComponent() {
 
                         <Divider sx={{ my: 2 }}>OR</Divider>
 
-                        <TextField
-                            label="Name"
-                            fullWidth
-                            margin="normal"
-                            InputProps={{
-                                sx: {
-                                    borderRadius: 2,
-                                },
-                            }}
-                        />
+                        {type === "register" ?
+                            <TextField
+                                label="Name"
+                                fullWidth
+                                margin="normal"
+                                InputProps={{
+                                    sx: {
+                                        borderRadius: 2,
+                                    },
+                                }}
+                            />
+                        : null}
+
                         <TextField
                             label="Email"
                             fullWidth
@@ -138,7 +147,7 @@ export default function RegisterComponent() {
                             }}
                         />
 
-                        <CommonButton text="Register" color="#22678c" sx={{ width: "100%", marginTop: "5px" }} />
+                        <CommonButton text= {type === "register" ? "Register" : "Login"} color="#22678c" sx={{ width: "100%", marginTop: "5px" }} />
 
                         <Typography
                             sx={{
@@ -147,9 +156,9 @@ export default function RegisterComponent() {
                                 fontSize: 14,
                             }}
                         >
-                            Already have an account?{" "}
-                            <span style={{ color: "#22678c", fontWeight: 600 }}>
-                                Login
+                            {type === "register" ? `Already have an account? ${" "}` : `Don't have an account? ${" "}`}
+                            <span style={{ color: "#22678c", fontWeight: 600, cursor: "pointer" }} onClick={() => {type === "register" ? navigate("/login") : navigate("/register")}}>
+                                {type === "register" ? "Login" : "Register"}
                             </span>
                         </Typography>
                     </CardContent>
