@@ -1,0 +1,34 @@
+.parallax-wrapper {
+   background: #213547;
+  padding: 2rem 0;
+  overflow: hidden;
+}
+
+/* 👇 FONT APPLIED ONLY HERE */
+.parallax-wrapper * {
+  font-family: "Plaster", sans-serif;
+}
+
+/* Parallax container */
+.parallax {
+  overflow: hidden;
+  letter-spacing: -2px;
+  line-height: 0.8;
+  white-space: nowrap;
+  display: flex;
+}
+
+/* Scrolling text */
+.parallax .scroller {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  display: flex;
+  white-space: nowrap;
+  color: white;
+}
+
+.parallax span {
+  display: block;
+  margin-right: 3rem;
+}

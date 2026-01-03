@@ -1,15 +1,22 @@
 
 // import './App.css'
-import HomeNavbar from './component/layout/HomeNavbar'
-import HomePage from './pages/HomePage'
+import Router from './routes/Routes';
+import { BrowserRouter } from 'react-router-dom';
+import "locomotive-scroll/dist/locomotive-scroll.css";
+import LocomotiveProvider from '../LocomotiveProvider';
+
 
 function App() {
 
+
   return (
-    <>
-    <HomeNavbar/>
-     <HomePage/>
-    </>
+    <BrowserRouter>
+      <LocomotiveProvider>
+        <Router />
+      </LocomotiveProvider>
+
+
+    </BrowserRouter>
   )
 }
 

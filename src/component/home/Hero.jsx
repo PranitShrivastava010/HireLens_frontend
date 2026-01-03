@@ -3,6 +3,7 @@ import HeroHeadline from "./HeroHeadline";
 import HeroSubtitle from "./HeroSubtitle";
 import HeroVisual from "./heroVisual";
 import CommonButton from "../common/CommonButton";
+import ThreeBackground from "../common/ThreeBackground";
 
 export default function Hero() {
   return (
@@ -16,8 +17,10 @@ export default function Hero() {
         padding: "0 6rem",
         background: "white",
         overflow: "hidden",
+        // marginTop: "5%"
       }}
     >
+      <ThreeBackground/>
       {/* Gradient overlay */}
       <div
         style={{
@@ -31,13 +34,13 @@ export default function Hero() {
         }}
       />
 
-      <div style={{ position: "relative", zIndex: 1 }}>
+      <div style={{ position: "relative", zIndex: 1, marginTop: "10%" }}>
         <HeroHeadline />
         <HeroSubtitle />
         <CommonButton color={"black"} text={"Get Started"} />
       </div>
 
-      <div style={{ position: "relative", zIndex: 1 }}>
+      <div style={{ position: "relative", zIndex: 1, marginTop: "10%" }}>
         <HeroVisual />
       </div>
     </section>

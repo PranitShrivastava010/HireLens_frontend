@@ -1,6 +1,12 @@
 import { motion as Motion } from "framer-motion";
 
-const sentence = "Your Job Search Seen Clearly".split(" ");
+const words = [
+  { text: "Your" },
+  { text: "Job", highlight: true },
+  { text: "Search", highlight: true },
+  { text: "Seen" },
+  { text: "Clearly" },
+];
 
 const container = {
   hidden: {},
@@ -39,13 +45,20 @@ export default function HeroHeadline() {
         marginBottom: "1rem",
       }}
     >
-      {sentence.map((wordText, index) => (
+      {words.map((wordItem, index) => (
         <Motion.span
           key={index}
           variants={word}
-          style={{ display: "inline-block", marginRight: "12px" }}
+          style={{
+            display: "inline-block",
+            marginRight: "12px",
+            padding: wordItem.highlight ? "4px 10px" : "0",
+            backgroundColor: wordItem.highlight ? "#27C4D6" : "transparent",
+            color: wordItem.highlight ? "#fff" : "#1f2937",
+            borderRadius: "6px",
+          }}
         >
-          {wordText}
+          {wordItem.text}
         </Motion.span>
       ))}
     </Motion.h1>

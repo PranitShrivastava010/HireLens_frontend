@@ -14,7 +14,7 @@ export default function HeroSubtitle() {
         fontWeight: "bold"
       }}
     >
-      Track applications, analyze ATS scores, and apply with confidence.
+      Stop guessing and start applying. Get the full picture on every role before you hit send.
     </Motion.p>
   );
 }
