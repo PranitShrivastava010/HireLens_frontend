@@ -31,6 +31,8 @@ const iconMap = {
     linkedin: <LinkedInIcon />,
 };
 
+const MotionListItemButton = Motion(ListItemButton);
+
 export default function Sidebar(
     {
         menuItems,
@@ -73,16 +75,26 @@ export default function Sidebar(
             {/* Navigation */}
             <List sx={{ mt: -9 }}>
                 {menuItems.map((item) => {
-                    const isActive = activePath === item.path;
+                    const normalizedActivePath = activePath.split("?")[0].replace(/\/$/, "");
+                    const normalizedItemPath = item.path.replace(/\/$/, "");
+
+                    const isActive =
+                        normalizedActivePath === normalizedItemPath ||
+                        normalizedActivePath.startsWith(normalizedItemPath + "/");
                     return (
                         <ListItem key={item.label} disablePadding>
-                            <ListItemButton
-                                component={Motion.div}
+                            <MotionListItemButton
                                 onClick={() => onNavigate(item.path)}
+                                initial={false}
+                                animate={{
+                                    backgroundColor: isActive ? "#424c70ff" : "transparent",
+                                    color: isActive ? "white" : "#555",
+                                }}
                                 whileHover={{
                                     scale: 1.02,
                                     backgroundColor: "#424c70ff",
-                                    color: "white"
+                                    color: "white",
+
                                 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{
@@ -90,15 +102,15 @@ export default function Sidebar(
                                     stiffness: 300,
                                     damping: 20,
                                 }}
+
                                 sx={{
                                     mx: 1,
                                     my: 0.5,
+                                    width: "100%",
                                     borderRadius: "10px",
-                                    color: isActive ? "white" : "#555",
-                                    cursor: "pointer",
                                     backgroundColor: isActive ? "#424c70ff" : "transparent",
+                                    color: isActive ? "white" : "#555",
                                     fontWeight: isActive ? 600 : 500,
-
                                     "& .MuiListItemIcon-root": {
                                         minWidth: 36,
                                         color: "inherit",
@@ -107,7 +119,7 @@ export default function Sidebar(
                             >
                                 <ListItemIcon>{iconMap[item.icon]}</ListItemIcon>
                                 <ListItemText primary={item.label} />
-                            </ListItemButton>
+                            </MotionListItemButton>
                         </ListItem>
                     )
 

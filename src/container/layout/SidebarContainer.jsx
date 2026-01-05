@@ -9,18 +9,18 @@ export default function SidebarContainer() {
         { label: "Dashboard", icon: "home", path: "/dashboard" },
         { label: "Jobs", icon: "board", path: "/jobs" },
         { label: "Statistics", icon: "stats", path: "/stats" },
-        { label: "Resume Builder", icon: "resume" },
-        { label: "Score my Resume", icon: "score" },
-        { label: "AI Answer Generator", icon: "ai" },
-        { label: "Cover Letter Generator", icon: "cover" },
-        { label: "LinkedIn Tools", icon: "linkedin" },
+        { label: "Resume Builder", icon: "resume", path: "/resume" },
+        { label: "Score my Resume", icon: "score", path: "/score" },
+        { label: "AI Answer Generator", icon: "ai", path: "/ai" },
+        { label: "Cover Letter Generator", icon: "cover", path: "/coverLetter" },
+        { label: "LinkedIn Tools", icon: "linkedin", path: "/linkedin" },
     ];
 
     return (
         <Sidebar
             menuItems={menuItems}
             activePath={location.pathname}
-            onNavigate={navigate}
+            onNavigate={(path) => path && navigate(path)}
         />
     );
 }

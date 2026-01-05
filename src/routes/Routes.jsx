@@ -6,6 +6,7 @@ import LoginPage from "../pages/LoginPage";
 import DashboardPage from "../pages/DashboardPage";
 import AppLayout from "./AppLayout";
 import AuthRedirect from "./AuthRedirect";
+import JobPage from "../pages/JobPage";
 
 export default function Router() {
     return (
@@ -30,6 +31,10 @@ export default function Router() {
                 <Route
                     path="/dashboard"
                     element={<DashboardPage />}
+                />
+                <Route
+                    path="/jobs"
+                    element={<JobPage/>}
                 />
             </Route>
         </Routes>
