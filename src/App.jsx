@@ -4,18 +4,18 @@ import Router from './routes/Routes';
 import { BrowserRouter } from 'react-router-dom';
 import "locomotive-scroll/dist/locomotive-scroll.css";
 import LocomotiveProvider from '../LocomotiveProvider';
+import AuthGate from './routes/AuthGate';
 
 
 function App() {
 
-
   return (
     <BrowserRouter>
-      <LocomotiveProvider>
-        <Router />
-      </LocomotiveProvider>
-
-
+      <AuthGate>
+        <LocomotiveProvider>
+          <Router />
+        </LocomotiveProvider>
+      </AuthGate>
     </BrowserRouter>
   )
 }

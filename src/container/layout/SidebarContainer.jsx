@@ -6,8 +6,8 @@ export default function SidebarContainer() {
     const navigate = useNavigate();
 
     const menuItems = [
-        { label: "Home", icon: "home", path: "/dashboard" },
-        { label: "Board", icon: "board", path: "/board" },
+        { label: "Dashboard", icon: "home", path: "/dashboard" },
+        { label: "Jobs", icon: "board", path: "/jobs" },
         { label: "Statistics", icon: "stats", path: "/stats" },
         { label: "Resume Builder", icon: "resume" },
         { label: "Score my Resume", icon: "score" },

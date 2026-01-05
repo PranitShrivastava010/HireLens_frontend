@@ -105,7 +105,7 @@ export default function DashboardComponent({
                 </Typography>
             </Box>
             <Box sx={{ ml: 3, mt: 5, display: "flex", gap: 5 }}>
-                <Card sx={{ width: "50%", borderRadius: 3 }}>
+                <Card sx={{ width: "50%", borderRadius: 3, boxShadow: 4 }}>
                     <CardContent sx={{ height: 350 }}>
                         <Typography variant="subtitle1" fontWeight={600}>
                             Weekly Progress
@@ -175,7 +175,7 @@ export default function DashboardComponent({
                         </Box>
                     </CardContent>
                 </Card>
-                <Card sx={{ width: "50%", borderRadius: 3 }}>
+                <Card sx={{ width: "50%", borderRadius: 3, boxShadow: 4 }}>
                     <CardContent sx={{ height: 350 }}>
                         <Typography variant="subtitle1" fontWeight={600} sx={{mb: -5}}>
                             Summary
@@ -208,7 +208,7 @@ export default function DashboardComponent({
                 </Card>
             </Box>
             <Box sx={{ mt: 5, ml: 3 }}>
-                <Card sx={{ borderRadius: 3 }}>
+                <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
                     <CardContent
                         sx={{
                             height: 350,      // ✅ REQUIRED

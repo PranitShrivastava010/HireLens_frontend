@@ -10,8 +10,8 @@ import {
     Typography,
 } from "@mui/material";
 
-import HomeIcon from "@mui/icons-material/Home";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import WorkIcon from '@mui/icons-material/Work';
 import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PsychologyIcon from "@mui/icons-material/Psychology";
@@ -21,8 +21,8 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 const drawerWidth = 260;
 
 const iconMap = {
-    home: <HomeIcon />,
-    board: <DashboardIcon />,
+    home: <SpaceDashboardIcon />,
+    board: <WorkIcon />,
     stats: <BarChartIcon />,
     resume: <DescriptionIcon />,
     score: <AutoAwesomeIcon />,
@@ -48,7 +48,7 @@ export default function Sidebar(
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
                     height: "100vh",
-                    overflowY: "auto", // ✅ allow sidebar scroll if needed
+                    overflowY: "auto",
                     overflowX: "hidden",
                     borderRight: "3px solid #eee",
                     bgcolor: "#f5f5f5",

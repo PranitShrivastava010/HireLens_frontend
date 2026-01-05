@@ -86,7 +86,7 @@ export default function HomeNavbar() {
 
           {/* Actions */}
           <div style={{ display: "flex", gap: "1rem" }}>
-            <button style={ghostBtn}>Login</button>
+            <button style={ghostBtn} onClick={() => navigate("/login")}>Login</button>
             <CommonButton color={"linear-gradient(135deg, #1E2B5C, #27C4D6)"} text={"Get Started"} radius={"30px"} onClick={() => navigate("/register")} />
           </div>
         </Motion.div>
