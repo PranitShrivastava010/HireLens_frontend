@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../../component/layout/Sidebar";
 
-export default function SidebarContainer() {
+export default function SidebarContainer({onClose}) {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -20,7 +20,10 @@ export default function SidebarContainer() {
         <Sidebar
             menuItems={menuItems}
             activePath={location.pathname}
-            onNavigate={(path) => path && navigate(path)}
+            onNavigate={(path) => {
+                navigate(path);
+                if (onClose) onClose();
+            }}
         />
     );
 }

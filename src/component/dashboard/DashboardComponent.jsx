@@ -1,4 +1,5 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 import React from "react";
 import {
     BarChart,
@@ -14,6 +15,32 @@ import {
     Cell
 } from 'recharts';
 // import { RechartsDevtools } from '@recharts/devtools';
+
+const MotionCard = motion(Card)
+
+const fadeInOut = {
+    hidden: {
+        opacity: 0,
+        y: 30,
+    },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut",
+        },
+    },
+    exit: {
+        opacity: 0,
+        y: -20,
+        transition: {
+            duration: 0.4,
+            ease: "easeIn",
+        },
+    },
+};
+
 
 export default function DashboardComponent({
     greeting,
@@ -105,7 +132,13 @@ export default function DashboardComponent({
                 </Typography>
             </Box>
             <Box sx={{ ml: 3, mt: 5, display: "flex", gap: 5 }}>
-                <Card sx={{ width: "50%", borderRadius: 3, boxShadow: 4 }}>
+                <MotionCard
+                    variants={fadeInOut}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    sx={{ width: "50%", borderRadius: 3, boxShadow: 4, }}
+                >
                     <CardContent sx={{ height: 350 }}>
                         <Typography variant="subtitle1" fontWeight={600}>
                             Weekly Progress
@@ -174,10 +207,16 @@ export default function DashboardComponent({
                             </Typography>
                         </Box>
                     </CardContent>
-                </Card>
-                <Card sx={{ width: "50%", borderRadius: 3, boxShadow: 4 }}>
+                </MotionCard>
+                <MotionCard
+                    variants={fadeInOut}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    sx={{ width: "50%", borderRadius: 3, boxShadow: 4 }}
+                >
                     <CardContent sx={{ height: 350 }}>
-                        <Typography variant="subtitle1" fontWeight={600} sx={{mb: -5}}>
+                        <Typography variant="subtitle1" fontWeight={600} sx={{ mb: -5 }}>
                             Summary
                         </Typography>
                         <ResponsiveContainer width="100%" height="100%">
@@ -205,10 +244,16 @@ export default function DashboardComponent({
                             </PieChart>
                         </ResponsiveContainer>
                     </CardContent>
-                </Card>
+                </MotionCard>
             </Box>
             <Box sx={{ mt: 5, ml: 3 }}>
-                <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
+                <MotionCard
+                    variants={fadeInOut}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    sx={{ borderRadius: 3, boxShadow: 4 }}
+                >
                     <CardContent
                         sx={{
                             height: 350,      // ✅ REQUIRED
@@ -227,7 +272,7 @@ export default function DashboardComponent({
                                     fill="#8884d8"
                                     radius={[8, 8, 0, 0]}
                                     barSize={15}
-                                    isAnimationActive={true}     
+                                    isAnimationActive={true}
                                     animationBegin={200}
                                     animationDuration={800}
                                     animationEasing="ease-out"
@@ -237,7 +282,7 @@ export default function DashboardComponent({
                                     fill="#82ca9d"
                                     radius={[8, 8, 0, 0]}
                                     barSize={15}
-                                    isAnimationActive={true} 
+                                    isAnimationActive={true}
                                     animationBegin={300}
                                     animationDuration={900}
                                     animationEasing="ease-out"
@@ -245,7 +290,7 @@ export default function DashboardComponent({
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
-                </Card>
+                </MotionCard>
             </Box>
         </Box>
     )

@@ -7,8 +7,12 @@ import {
   Avatar,
   Chip,
 } from "@mui/material";
+import { getJobAgeLabel } from "../../utils/jobAge";
 
 export default function JobCard({ job }) {
+
+  const jobAge = getJobAgeLabel(job)
+
   return (
     <Card
       sx={{
@@ -17,6 +21,7 @@ export default function JobCard({ job }) {
         boxShadow: 2,
         transition: "0.2s",
         "&:hover": { boxShadow: 6 },
+        cursor: "pointer"
       }}
     >
       <CardContent>
@@ -33,7 +38,7 @@ export default function JobCard({ job }) {
             </Typography>
 
             <Typography variant="body2" color="text.secondary">
-              {job.companyName} • {job.location}
+              {job.companyName} • {job.location}  {job.state ? `• ${job.state}` : null}  {job.city ? `• ${job.city}` : null}
             </Typography>
           </Box>
         </Box>
@@ -50,11 +55,11 @@ export default function JobCard({ job }) {
             />
           )}
 
-          {job.postedAt && (
+          {jobAge && (
             <Chip
-              label={job.postedAt}
+              label={jobAge}
               size="small"
-              color="success"
+              color={jobAge === "Today" ? "success" : "info"}
             />
           )}
         </Box>

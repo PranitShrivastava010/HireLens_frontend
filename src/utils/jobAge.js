@@ -1,0 +1,13 @@
+import { differenceInDays } from "date-fns";
+
+export function getJobAgeLabel(job) {
+  const baseDate = job.postedAtUtc || job.createdAt;
+
+  if (!baseDate) return null;
+
+  const days = differenceInDays(new Date(), new Date(baseDate));
+
+  if (days <= 0) return "Today";
+  if (days === 1) return "1 day ago";
+  return `${days} days ago`;
+}
