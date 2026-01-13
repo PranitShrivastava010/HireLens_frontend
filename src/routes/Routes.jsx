@@ -7,6 +7,8 @@ import DashboardPage from "../pages/DashboardPage";
 import AppLayout from "./AppLayout";
 import AuthRedirect from "./AuthRedirect";
 import JobPage from "../pages/JobPage";
+import RequireJobPreferences from "./RequiredJobPreference";
+import JobPreferencePage from "../pages/JobPreferencePage";
 
 export default function Router() {
     return (
@@ -34,7 +36,17 @@ export default function Router() {
                 />
                 <Route
                     path="/jobs"
-                    element={<JobPage/>}
+                    element={
+                        <RequireJobPreferences>
+                            <JobPage />
+                        </RequireJobPreferences>
+                    }
+                />
+                <Route
+                    path="/job-preferences"
+                    element={
+                        <JobPreferencePage/>
+                    }
                 />
             </Route>
         </Routes>

@@ -18,10 +18,21 @@ export default function JobCard({ job }) {
       sx={{
         mb: 2,
         borderRadius: 3,
-        boxShadow: 2,
-        transition: "0.2s",
+        // boxShadow: 2,
+        // transition: "0.2s",
         "&:hover": { boxShadow: 6 },
-        cursor: "pointer"
+        cursor: "pointer",
+        background: "rgba(240, 240, 240, 0.6)", // light grey glass
+        backdropFilter: "blur(10px)",            // frosted effect
+        WebkitBackdropFilter: "blur(10px)",      // Safari support
+        border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+        boxShadow: "0 2px 5px rgba(0,0,0,0.05)",     // soft shadow
+        color: "#222",                            // darker text for contrast
+        transition: "all 0.3s ease",
+        ":hover": {
+          background: "rgba(240, 240, 240, 0.75)",
+          boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+        },
       }}
     >
       <CardContent>

@@ -25,13 +25,19 @@ export default function LoginContainer() {
         try {
             const res = await login(formData).unwrap()
 
+
             dispatch(setCredentials({
                 user: res.Result.sendUser,
                 accessToken: res.Result.accessToken
             }))
             console.log("login res", res)
 
-            navigate("/dashboard")
+            if (res.Result.sendUser.hasCompletedPref) {
+                navigate("/jobs", { replace: true });
+            } else {
+                navigate("/jobs", { replace: true }); 
+            }
+
         } catch (error) {
             console.log(error)
         }

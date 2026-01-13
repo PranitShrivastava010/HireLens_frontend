@@ -7,7 +7,7 @@ export default function SidebarContainer({onClose}) {
 
     const menuItems = [
         { label: "Dashboard", icon: "home", path: "/dashboard" },
-        { label: "Jobs", icon: "board", path: "/jobs" },
+        { label: "Jobs", icon: "board", path: "/jobs", matchPaths: ["/jobs", "/job-preferences"] },
         { label: "Statistics", icon: "stats", path: "/stats" },
         { label: "Resume Builder", icon: "resume", path: "/resume" },
         { label: "Score my Resume", icon: "score", path: "/score" },

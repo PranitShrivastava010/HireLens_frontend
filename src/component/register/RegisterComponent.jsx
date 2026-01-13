@@ -18,7 +18,6 @@ export default function RegisterComponent({
     onChange,
     onSubmit,
     onVerifyOtp,
-    loading,
     error,
     step,
     otp,

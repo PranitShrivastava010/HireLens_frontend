@@ -69,14 +69,19 @@ button:focus-visible {
 }
 @font-face {
   font-family: "MyFont";
-  src: url("/jakarta.woff2") format("truetype");
+  src: url("/jakarta.woff2") format("woff2");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Heading";
-  src: url("/clash.woff2") format("truetype");
+  src: url("/clash.woff2") format("woff2");
   font-weight: "bold";
   font-style: normal;
+}
+
+@font-face {
+  font-family: "stardum";
+  src: url("/Stardum.Regular.ttf") format("truetype");
 }

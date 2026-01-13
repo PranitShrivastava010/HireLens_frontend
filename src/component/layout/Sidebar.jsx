@@ -40,6 +40,8 @@ export default function Sidebar(
         onNavigate,
     }
 ) {
+    const normalizedActivePath = activePath.split("?")[0].replace(/\/$/, "");
+
     return (
         <Drawer
             variant="permanent"
@@ -75,12 +77,18 @@ export default function Sidebar(
             {/* Navigation */}
             <List sx={{ mt: -9 }}>
                 {menuItems.map((item) => {
-                    const normalizedActivePath = activePath.split("?")[0].replace(/\/$/, "");
                     const normalizedItemPath = item.path.replace(/\/$/, "");
 
                     const isActive =
-                        normalizedActivePath === normalizedItemPath ||
-                        normalizedActivePath.startsWith(normalizedItemPath + "/");
+                        item.matchPaths
+                            ? item.matchPaths.some(
+                                (path) =>
+                                    normalizedActivePath === path ||
+                                    normalizedActivePath.startsWith(path + "/")
+                            )
+                            : normalizedActivePath === normalizedItemPath ||
+                            normalizedActivePath.startsWith(normalizedItemPath + "/");
+
                     return (
                         <ListItem key={item.label} disablePadding>
                             <MotionListItemButton
@@ -118,7 +126,15 @@ export default function Sidebar(
                                 }}
                             >
                                 <ListItemIcon>{iconMap[item.icon]}</ListItemIcon>
-                                <ListItemText primary={item.label} />
+                                <ListItemText
+                                    primary={item.label}
+                                    primaryTypographyProps={{
+                                        sx: {
+                                            fontFamily: "stardum",
+                                            fontWeight: 900,
+                                        },
+                                    }}
+                                />
                             </MotionListItemButton>
                         </ListItem>
                     )

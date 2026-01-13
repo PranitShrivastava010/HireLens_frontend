@@ -50,7 +50,7 @@ export default function RegisterContainer() {
                 accessToken: res.Result.accessToken,
             }));
 
-            navigate("/dashboard"); // success → redirect
+            navigate("/jobs"); // success → redirect
         } catch (err) {
             console.error(err);
         }

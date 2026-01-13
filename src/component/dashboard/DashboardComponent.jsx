@@ -137,7 +137,21 @@ export default function DashboardComponent({
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    sx={{ width: "50%", borderRadius: 3, boxShadow: 4, }}
+                    sx={{
+                        width: "50%",
+                        borderRadius: 3,
+                        background: "rgba(240, 240, 240, 0.6)", // light grey glass
+                        backdropFilter: "blur(10px)",            // frosted effect
+                        WebkitBackdropFilter: "blur(10px)",      // Safari support
+                        border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.05)",     // soft shadow
+                        color: "#222",                            // darker text for contrast
+                        transition: "all 0.3s ease",
+                        ":hover": {
+                            background: "rgba(240, 240, 240, 0.75)",
+                            boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
+                        },
+                    }}
                 >
                     <CardContent sx={{ height: 350 }}>
                         <Typography variant="subtitle1" fontWeight={600}>
@@ -213,7 +227,21 @@ export default function DashboardComponent({
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    sx={{ width: "50%", borderRadius: 3, boxShadow: 4 }}
+                    sx={{
+                        width: "50%",
+                        borderRadius: 3,
+                        background: "rgba(240, 240, 240, 0.6)", // light grey glass
+                        backdropFilter: "blur(10px)",            // frosted effect
+                        WebkitBackdropFilter: "blur(10px)",      // Safari support
+                        border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.05)",     // soft shadow
+                        color: "#222",                            // darker text for contrast
+                        transition: "all 0.3s ease",
+                        ":hover": {
+                            background: "rgba(240, 240, 240, 0.75)",
+                            boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
+                        },
+                    }}
                 >
                     <CardContent sx={{ height: 350 }}>
                         <Typography variant="subtitle1" fontWeight={600} sx={{ mb: -5 }}>
@@ -252,12 +280,25 @@ export default function DashboardComponent({
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    sx={{ borderRadius: 3, boxShadow: 4 }}
+                    sx={{
+                        borderRadius: 3,
+                        background: "rgba(240, 240, 240, 0.6)", // light grey glass
+                        backdropFilter: "blur(10px)",            // frosted effect
+                        WebkitBackdropFilter: "blur(10px)",      // Safari support
+                        border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.05)",     // soft shadow
+                        color: "#222",                            // darker text for contrast
+                        transition: "all 0.3s ease",
+                        ":hover": {
+                            background: "rgba(240, 240, 240, 0.75)",
+                            boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
+                        },
+                    }}
                 >
                     <CardContent
                         sx={{
-                            height: 350,      // ✅ REQUIRED
-                            minHeight: 300,   // extra safety
+                            height: 350,
+                            minHeight: 300,
                         }}
                     >
                         <ResponsiveContainer width="100%" height="100%">
