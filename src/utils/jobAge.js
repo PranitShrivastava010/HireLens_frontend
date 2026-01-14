@@ -1,7 +1,7 @@
 import { differenceInDays } from "date-fns";
 
 export function getJobAgeLabel(job) {
-  const baseDate = job.postedAtUtc || job.createdAt;
+  const baseDate = job.postedAtUtc;
 
   if (!baseDate) return null;
 

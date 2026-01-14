@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLazyGetJobsQuery } from "../../features/job/jobApi";
 import JobsList from "../../component/job/JobList";
+import JobDetailsContainer from "./JobDetailsContainer";
 
 const MAX_HISTORY = 5;
 
@@ -10,12 +11,29 @@ export default function JobsContainer() {
   const [locationInput, setLocationInput] = useState("");
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("")
-  const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem("job_search_history"));
+      return Array.isArray(v) ? v : [];
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  });
+  const [locationSuggestions, setLocationSuggestions] = useState(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem("job_location_history"));
+      return Array.isArray(v) ? v : [];
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  });
   const [page, setPage] = useState(1);
   const [jobs, setJobs] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState(null)
 
   const loaderRef = useRef(null);
   const observerRef = useRef(null);
@@ -26,12 +44,22 @@ export default function JobsContainer() {
   const [getJobs, { isFetching }] = useLazyGetJobsQuery();
 
   useEffect(() => {
-    setSearchSuggestions(
-      JSON.parse(localStorage.getItem("job_search_history")) || []
-    );
-    setLocationSuggestions(
-      JSON.parse(localStorage.getItem("job_location_history")) || []
-    );
+    const onStorage = (e) => {
+      try {
+        if (e.key === "job_search_history") {
+          setSearchSuggestions(JSON.parse(e.newValue) || []);
+        }
+        if (e.key === "job_location_history") {
+          setLocationSuggestions(JSON.parse(e.newValue) || []);
+        }
+      } catch (err) {
+        console.log(err);
+        // ignore malformed JSON
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const handleApplyFilters = () => {
@@ -46,6 +74,15 @@ export default function JobsContainer() {
     setPage(1);
     setHasMore(true);
     setSearchOpen(false)
+  };
+
+  const handleJobClick = (jobId) => {
+    console.log("JOB CLICKED:", jobId);
+    setSelectedJobId(jobId);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedJobId(null);
   };
 
   const saveToHistory = (key, value) => {
@@ -117,21 +154,31 @@ export default function JobsContainer() {
   }, [isFetching, hasMore]);
 
   return (
-    <JobsList
-      jobs={jobs}
-      loading={isFetching}
-      loaderRef={loaderRef}
-      hasMore={hasMore}
-      searchInput={searchInput}
-      locationInput={locationInput}
-      setSearchInput={setSearchInput}
-      setLocationInput={setLocationInput}
-      searchSuggestions={searchSuggestions}
-      locationSuggestions={locationSuggestions}
-      onApply={handleApplyFilters}
-      searchOpen={searchOpen}
-      onOpenSearch={handleOpenSearch}
-      onCloseSearch={handleCloseSearch}
-    />
+    <>
+      <JobsList
+        jobs={jobs}
+        loading={isFetching}
+        loaderRef={loaderRef}
+        hasMore={hasMore}
+        searchInput={searchInput}
+        locationInput={locationInput}
+        setSearchInput={setSearchInput}
+        setLocationInput={setLocationInput}
+        searchSuggestions={searchSuggestions}
+        locationSuggestions={locationSuggestions}
+        onApply={handleApplyFilters}
+        searchOpen={searchOpen}
+        onOpenSearch={handleOpenSearch}
+        onCloseSearch={handleCloseSearch}
+        onJobClick={handleJobClick}
+      />
+
+      {selectedJobId && (
+        <JobDetailsContainer
+          jobId={selectedJobId}
+          onClose={handleCloseModal}
+        />
+      )}
+    </>
   );
 }

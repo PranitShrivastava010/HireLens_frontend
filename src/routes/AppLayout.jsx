@@ -11,7 +11,7 @@ import SidebarContainer from "../container/layout/SidebarContainer";
     const [open, setOpen] = useState(false);
 
     return (
-      <Box sx={{ display: "flex", height: "100vh" }}>
+      <Box className="app-background" sx={{ display: "flex", height: "100vh" }}>
         
         {/* DESKTOP SIDEBAR */}
         {!isMobile && <SidebarContainer />}

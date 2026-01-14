@@ -32,6 +32,12 @@ export const jobApi = rtkApi.injectEndpoints({
                 params: {q}
             }),
             transformResponse: (response) => response.data,
+        }),
+        getJobById: builder.query({
+            query: (id) => ({
+                url: `/api/job/${id}`,
+                method: "GET"
+            })
         })
     })
 })
@@ -40,4 +46,5 @@ export const {
     useLazyGetJobsQuery,
     useSaveJobPreferenceMutation,
     useLazyGetRoleSkillSuggestionQuery,
+    useLazyGetJobByIdQuery
 } = jobApi

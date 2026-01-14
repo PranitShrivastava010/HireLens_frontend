@@ -1,13 +1,13 @@
 import { motion as Motion } from "framer-motion";
 import {
-    Box,
-    Drawer,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography,
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
 } from "@mui/material";
 
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
@@ -21,126 +21,123 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 const drawerWidth = 260;
 
 const iconMap = {
-    home: <SpaceDashboardIcon />,
-    board: <WorkIcon />,
-    stats: <BarChartIcon />,
-    resume: <DescriptionIcon />,
-    score: <AutoAwesomeIcon />,
-    ai: <PsychologyIcon />,
-    cover: <DescriptionIcon />,
-    linkedin: <LinkedInIcon />,
+  home: <SpaceDashboardIcon />,
+  board: <WorkIcon />,
+  stats: <BarChartIcon />,
+  resume: <DescriptionIcon />,
+  score: <AutoAwesomeIcon />,
+  ai: <PsychologyIcon />,
+  cover: <DescriptionIcon />,
+  linkedin: <LinkedInIcon />,
 };
 
 const MotionListItemButton = Motion(ListItemButton);
 
-export default function Sidebar(
-    {
-        menuItems,
-        activePath,
-        onNavigate,
-    }
-) {
-    const normalizedActivePath = activePath.split("?")[0].replace(/\/$/, "");
+export default function Sidebar({ menuItems, activePath, onNavigate }) {
+  const normalizedActivePath = activePath.split("?")[0].replace(/\/$/, "");
 
-    return (
-        <Drawer
-            variant="permanent"
-            sx={{
-                width: drawerWidth,
-                flexShrink: 0,
-                bgcolor: "#555",
-                "& .MuiDrawer-paper": {
-                    width: drawerWidth,
-                    height: "100vh",
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    borderRight: "3px solid #eee",
-                    bgcolor: "#f5f5f5",
-                    boxSizing: "border-box",
-                },
-            }}
+  return (
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        "& .MuiDrawer-paper": {
+          width: drawerWidth,
+          height: "100vh",
+          overflowY: "auto",
+          bgcolor: "#1A1E2C",
+          borderRight: "none",
+          px: 1,
+          py: 2,
+        },
+      }}
+    >
+      {/* Logo */}
+      <Box sx={{ px: 4, py: 1 }}>
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: "bold", color: "#ffffff", mb: 0.5 }}
         >
-            {/* Logo */}
-            <Box sx={{ px: -1, py: -1, mt: -13, ml: -4, mb: -4 }}>
-                <Box
-                    component="img"
-                    src="/hrText.png"
-                    alt="eztrackr logo"
-                    sx={{
-                        width: "300px",
-                        height: "auto",
-                        display: "block",
-                    }}
+          Hire<span style={{ color: "#27C4D6" }}>Lens</span>
+        </Typography>
+        <Typography variant="caption" sx={{ color: "#aaa" }}>
+          EE-Tracker for Careers
+        </Typography>
+      </Box>
+
+      {/* Menu */}
+      <List sx={{ mt: 2 }}>
+        {menuItems.map((item) => {
+          const normalizedItemPath = item.path.replace(/\/$/, "");
+          const isActive =
+            normalizedActivePath === normalizedItemPath ||
+            normalizedActivePath.startsWith(normalizedItemPath + "/");
+
+          return (
+            <ListItem key={item.label} disablePadding sx={{ mb: 1 }}>
+              <MotionListItemButton
+                onClick={() => onNavigate(item.path)}
+                initial={false}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                sx={{
+                  mx: 1,
+                  borderRadius: "12px",
+                  px: 2,
+                  py: 1.2,
+                  color: "#fff",
+                  fontWeight: 500,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 36,
+                    color: isActive ? "#27C4D6" : "#888",
+                    transition: "0.3s",
+                    filter: isActive
+                      ? "drop-shadow(0 0 6px #27C4D6)"
+                      : "none",
+                    animation: isActive
+                      ? "glowPulse 1.5s ease-in-out infinite alternate"
+                      : "none",
+                    "&:hover": {
+                      color: "#27C4D6",
+                      filter: "drop-shadow(0 0 6px #27C4D6)",
+                    },
+                  }}
+                >
+                  {iconMap[item.icon]}
+                </ListItemIcon>
+
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    sx: { fontWeight: 500, fontSize: "0.95rem", color: "#fff" },
+                  }}
                 />
-            </Box>
+              </MotionListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
 
-            {/* Navigation */}
-            <List sx={{ mt: -9 }}>
-                {menuItems.map((item) => {
-                    const normalizedItemPath = item.path.replace(/\/$/, "");
-
-                    const isActive =
-                        item.matchPaths
-                            ? item.matchPaths.some(
-                                (path) =>
-                                    normalizedActivePath === path ||
-                                    normalizedActivePath.startsWith(path + "/")
-                            )
-                            : normalizedActivePath === normalizedItemPath ||
-                            normalizedActivePath.startsWith(normalizedItemPath + "/");
-
-                    return (
-                        <ListItem key={item.label} disablePadding>
-                            <MotionListItemButton
-                                onClick={() => onNavigate(item.path)}
-                                initial={false}
-                                animate={{
-                                    backgroundColor: isActive ? "#424c70ff" : "transparent",
-                                    color: isActive ? "white" : "#555",
-                                }}
-                                whileHover={{
-                                    scale: 1.02,
-                                    backgroundColor: "#424c70ff",
-                                    color: "white",
-
-                                }}
-                                whileTap={{ scale: 0.98 }}
-                                transition={{
-                                    type: "spring",
-                                    stiffness: 300,
-                                    damping: 20,
-                                }}
-
-                                sx={{
-                                    mx: 1,
-                                    my: 0.5,
-                                    width: "100%",
-                                    borderRadius: "10px",
-                                    backgroundColor: isActive ? "#424c70ff" : "transparent",
-                                    color: isActive ? "white" : "#555",
-                                    fontWeight: isActive ? 600 : 500,
-                                    "& .MuiListItemIcon-root": {
-                                        minWidth: 36,
-                                        color: "inherit",
-                                    },
-                                }}
-                            >
-                                <ListItemIcon>{iconMap[item.icon]}</ListItemIcon>
-                                <ListItemText
-                                    primary={item.label}
-                                    primaryTypographyProps={{
-                                        sx: {
-                                            fontFamily: "stardum",
-                                            fontWeight: 900,
-                                        },
-                                    }}
-                                />
-                            </MotionListItemButton>
-                        </ListItem>
-                    )
-
-                })}
-            </List>
-        </Drawer>
-    );
+      {/* Glow pulse keyframes */}
+      <style>
+        {`
+          @keyframes glowPulse {
+            0% {
+              filter: drop-shadow(0 0 4px #27C4D6);
+            }
+            50% {
+              filter: drop-shadow(0 0 12px #27C4D6);
+            }
+            100% {
+              filter: drop-shadow(0 0 4px #27C4D6);
+            }
+          }
+        `}
+      </style>
+    </Drawer>
+  );
 }

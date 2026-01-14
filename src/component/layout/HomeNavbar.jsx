@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const ghostBtn = {
   background: "transparent",
   border: "none",
-  fontWeight: 500,
+  fontWeight: 900,
   cursor: "pointer",
 };
 
@@ -79,9 +79,9 @@ export default function HomeNavbar() {
         >
           {/* Links */}
           <div style={{ display: "flex", gap: "2rem", }}>
-            <a style={{color : "#1E2B5C"}} href="#">Job tracker</a>
-            <a style={{color : "#1E2B5C"}} href="#">Free AI Tools</a>
-            <a style={{color : "#1E2B5C"}} href="#">For Organizations</a>
+            <a style={{color : "#1E2B5C", fontFamily: "Heading", fontWeight: 600}} href="#">Job tracker</a>
+            <a style={{color : "#1E2B5C", fontFamily: "Heading", fontWeight: 600}} href="#">Free AI Tools</a>
+            <a style={{color : "#1E2B5C", fontFamily: "Heading", fontWeight: 600}} href="#">For Organizations</a>
           </div>
 
           {/* Actions */}

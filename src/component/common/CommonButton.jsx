@@ -6,6 +6,7 @@ export default function CommonButton({
   radius = "8px",
   sx={},
   onClick,
+  textColor = "#fff",
 }) {
   return (
     <Motion.button
@@ -15,9 +16,11 @@ export default function CommonButton({
       style={{
         padding: "14px 28px",
         fontSize: "1rem",
+        fontFamily: "Heading",
         borderRadius: radius,
         background: color,
-        color: "#fff",
+        color: {textColor},
+        fontWeight: 600,
         border: "none",
         cursor: "pointer",
         ...sx
