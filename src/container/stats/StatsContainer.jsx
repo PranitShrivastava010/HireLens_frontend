@@ -3,6 +3,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import Stats from "../../component/stats/Stats";
 import { useGetUserApplicationsQuery } from "../../features/application/applicationApi";
 import JobDetailsContainer from "../job/JobDetailsContainer";
+import InterviewDateModal from "../../component/stats/InterviewDateModal";
 
 export default function StatsContainer() {
     const { data: applications, isLoading, error } = useGetUserApplicationsQuery();

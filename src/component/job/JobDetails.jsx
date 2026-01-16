@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Divider, Button, Avatar } from "@mui/material";
+import { Box, Typography, Divider, Button, Avatar, IconButton } from "@mui/material";
 import { motion as Motion } from "framer-motion";
+import LaunchIcon from '@mui/icons-material/Launch';
 import CommonCard from "../common/CommonCard";
 import CommonButton from "../common/CommonButton";
 import { LensAILogo } from "../common/LensAi";
@@ -78,10 +79,30 @@ export default function JobDetails({ job, onClose, isMobile, onLensAIClick }) {
                         >
                             {!job.companyLogo && job.companyName?.[0]}
                         </Avatar>
-                        <Box>
-                            <Typography variant="h5" fontWeight={700}>
-                                {job.title}
-                            </Typography>
+                        <Box sx={{ flex: 1 }}>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <Typography variant="h5" fontWeight={700}>
+                                    {job.title}
+                                </Typography>
+                                {job.companyWebsite && (
+                                    <IconButton
+                                        onClick={() => window.open(job.companyWebsite, "_blank")}
+                                        sx={{
+                                            width: 24,
+                                            height: 24,
+                                            color: "#00d4ff",
+                                            padding: 0,
+                                            "&:hover": {
+                                                color: "#00e5ff",
+                                                transform: "scale(1.1)",
+                                            },
+                                            transition: "all 0.2s ease",
+                                        }}
+                                    >
+                                        <LaunchIcon sx={{ fontSize: "1.2rem" }} />
+                                    </IconButton>
+                                )}
+                            </Box>
                             <Typography sx={{ opacity: 0.7, mt: 0.5 }}>
                                 {job.companyName} • {job.location}
                             </Typography>

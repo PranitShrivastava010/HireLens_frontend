@@ -4,30 +4,40 @@ import { motion as Motion } from "framer-motion";
 import InfoIcon from "@mui/icons-material/Info";
 import "./StatsCard.css";    
 import CommonCard from "../common/CommonCard";
+import { useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 const MotionDiv = Motion.div;
 
 export default function StatsCard({ item, currentStatus, onInfoClick }) {
-    const handleDragStart = (e) => {
-        const dragData = {
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id: `draggable-${item.id}`,
+        data: {
             applicationId: item.id,
             jobId: item.jobId,
             title: item.title,
             companyName: item.companyName,
             fromStatus: currentStatus,
-        };
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("application/json", JSON.stringify(dragData));
+        },
+    });
+
+    const style = {
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.5 : 1,
+        touchAction: "none",
+        cursor: isDragging ? "grabbing" : "grab",
     };
 
     return (
         <MotionDiv
+            ref={setNodeRef}
+            {...listeners}
+            {...attributes}
             whileHover={{ y: -2 }}
             transition={{ duration: 0.2 }}
             className="stats-card-wrapper"
             overflow="hidden"
-            draggable
-            onDragStart={handleDragStart}
+            style={style}
         >
             <Box sx={{ position: "relative" }}>
                 {/* Info Button */}
