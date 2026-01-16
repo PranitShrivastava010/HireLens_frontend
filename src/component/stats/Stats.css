@@ -1,0 +1,35 @@
+.stats-scrollable-container {
+    scroll-behavior: smooth;
+}
+
+.stats-scrollable-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.stats-scrollable-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.stats-scrollable-container::-webkit-scrollbar-thumb {
+    background: rgba(39, 196, 214, 0.4);
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+
+.stats-scrollable-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(39, 196, 214, 0.6);
+}
+
+/* Firefox */
+.stats-scrollable-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(39, 196, 214, 0.4) rgba(255, 255, 255, 0.05);
+}
+
+/* Smooth scrolling */
+@supports (scroll-behavior: smooth) {
+    .stats-scrollable-container {
+        scroll-behavior: smooth;
+    }
+}

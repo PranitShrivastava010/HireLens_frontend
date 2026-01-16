@@ -117,7 +117,7 @@ export default function DashboardComponent({
                 <Typography
                     variant="h4"
                     fontWeight={600}
-                    sx={{ color: "#faf9f9", fontFamily: "MyFont" }}
+                    sx={{ color: "#faf9f9", fontFamily: "Heading" }}
                 >
                     {greeting} 👋
                 </Typography>

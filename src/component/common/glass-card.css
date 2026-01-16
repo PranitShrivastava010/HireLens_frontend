@@ -21,7 +21,6 @@
     0 18px 45px rgba(0,0,0,0.45);
 
   transition: transform 0.3s ease, border 0.3s ease;
-  cursor: pointer;
 }
 
 /* Glow */

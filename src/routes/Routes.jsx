@@ -9,6 +9,7 @@ import AuthRedirect from "./AuthRedirect";
 import JobPage from "../pages/JobPage";
 import RequireJobPreferences from "./RequiredJobPreference";
 import JobPreferencePage from "../pages/JobPreferencePage";
+import StatsPage from "../pages/StatsPage";
 
 export default function Router() {
     return (
@@ -47,6 +48,10 @@ export default function Router() {
                     element={
                         <JobPreferencePage/>
                     }
+                />
+                <Route
+                    path="/stats"
+                    element={<StatsPage />}
                 />
             </Route>
         </Routes>
