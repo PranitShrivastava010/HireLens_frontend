@@ -19,7 +19,7 @@ const columns = [
     {id: "NO_RESPONSE", title: "NO RESPONSE", color: "#6B7280", icon: <ErrorIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
 ];
 
-export default function Stats({ stats }) {
+export default function Stats({ stats, onCardInfoClick }) {
     return (
         <Box
             sx={{
@@ -80,6 +80,7 @@ export default function Stats({ stats }) {
                         <StatsColumn
                             column={column}
                             items={stats[column.id] || []}
+                            onCardInfoClick={onCardInfoClick}
                         />
                     </Motion.div>
                 ))}

@@ -10,7 +10,7 @@ import "./StatsColumn.css";
 
 const MotionBox = Motion(Box);
 
-export default function StatsColumn({ column, items }) {
+export default function StatsColumn({ column, items, onCardInfoClick }) {
     const [interviewModal, setInterviewModal] = useState({ open: false, item: null });
     const [updateStatus, { isLoading: isUpdating }] = useUpdateApplicationStatusMutation();
 
@@ -150,6 +150,7 @@ export default function StatsColumn({ column, items }) {
                                 item={item} 
                                 columnColor={column.color}
                                 currentStatus={column.id}
+                                onInfoClick={onCardInfoClick}
                             />
                         </Motion.div>
                     ))

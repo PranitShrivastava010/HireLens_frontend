@@ -1,10 +1,12 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Stats from "../../component/stats/Stats";
 import { useGetUserApplicationsQuery } from "../../features/application/applicationApi";
+import JobDetailsContainer from "../job/JobDetailsContainer";
 
 export default function StatsContainer() {
     const { data: applications, isLoading, error } = useGetUserApplicationsQuery();
+    const [selectedJobId, setSelectedJobId] = useState(null);
 
     // Transform API data to match Stats component structure
     const stats = useMemo(() => {
@@ -60,9 +62,23 @@ export default function StatsContainer() {
         );
     }
 
+    const handleCardInfoClick = (jobId) => {
+        setSelectedJobId(jobId);
+    };
+
+    const handleCloseJobDetails = () => {
+        setSelectedJobId(null);
+    };
+
     return (
-        <Box sx={{ p: 3 }}>
-            <Stats stats={stats} />
-        </Box>
+        <>
+            <Box sx={{ p: 3 }}>
+                <Stats stats={stats} onCardInfoClick={handleCardInfoClick} />
+            </Box>
+            <JobDetailsContainer 
+                jobId={selectedJobId} 
+                onClose={handleCloseJobDetails} 
+            />
+        </>
     );
 }
