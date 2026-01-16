@@ -19,8 +19,8 @@ export default function JobDetails({ job, onClose, isMobile, onLensAIClick }) {
     if (!job) return null;
 
     const applicationStatus = job.applicationStatus?.key;
-    const isApplied = applicationStatus === "APPLIED";
-    const isSaved = applicationStatus === "SAVED";
+    const statusLabel = job.applicationStatus?.label;
+    const hasApplicationStatus = !!applicationStatus;
 
     const handleSaveJob = async () => {
         try {
@@ -98,24 +98,26 @@ export default function JobDetails({ job, onClose, isMobile, onLensAIClick }) {
                             flexWrap: "wrap",
                         }}
                     >
-                        {isApplied ? (
-                            <>
-                                <CommonButton
-                                    radius="12px"
-                                    text="Applied"
-                                    textColor="black"
-                                    disabled={true}
-                                    sx={{ opacity: 0.6 }}
-                                />
-                                <CommonButton
-                                    radius="12px"
-                                    text="Can't Save"
-                                    textColor="black"
-                                    disabled={true}
-                                    sx={{ opacity: 0.6 }}
-                                />
-                            </>
+                        {hasApplicationStatus ? (
+                            // Show status badge
+                            <Box
+                                sx={{
+                                    px: 3,
+                                    py: 1.5,
+                                    backgroundColor: "rgba(0, 212, 255, 0.1)",
+                                    border: "1.5px solid #00d4ff",
+                                    borderRadius: "12px",
+                                    color: "#00d4ff",
+                                    fontWeight: 600,
+                                    fontSize: "0.95rem",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.5px",
+                                }}
+                            >
+                                ✓ {statusLabel}
+                            </Box>
                         ) : (
+                            // Show action buttons
                             <>
                                 <CommonButton
                                     radius="12px"
@@ -129,16 +131,15 @@ export default function JobDetails({ job, onClose, isMobile, onLensAIClick }) {
 
                                 <CommonButton
                                     radius="12px"
-                                    text={isSaved ? "Already Saved" : "Save Job"}
+                                    text="Save Job"
                                     textColor="black"
-                                    disabled={isSaved}
                                     onClick={handleSaveJob}
                                 />
                             </>
                         )}
 
                         {/* LensAI Logo — Extract Keywords */}
-                        {!isMobile && !isApplied && (
+                        {!isMobile && !hasApplicationStatus && (
                             <LensAILogo
                                 title={"Click to extract keywords"}
                                 onClick={onLensAIClick}

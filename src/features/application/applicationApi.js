@@ -25,8 +25,24 @@ const applicationApi = rtkApi.injectEndpoints({
             },
             providesTags: ["Applications"],
         }),
+        updateApplicationStatus: builder.mutation({
+            query: ({ applicationId, newStatusKey, interviewDate }) => ({
+                url: "/api/application/status",
+                method: "PATCH",
+                body: {
+                    applicationId,
+                    newStatusKey,
+                    interviewDate,
+                },
+            }),
+            invalidatesTags: ["Applications"],
+        }),
     }),
 });
 
-export const { useApplyJobMutation, useGetUserApplicationsQuery } = applicationApi;
+export const { 
+    useApplyJobMutation, 
+    useGetUserApplicationsQuery,
+    useUpdateApplicationStatusMutation
+} = applicationApi;
 export default applicationApi;

@@ -1,16 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { motion as Motion } from "framer-motion";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import StatsCard from "./StatsCard";
+import InterviewDateModal from "./InterviewDateModal";
+import { useUpdateApplicationStatusMutation } from "../../features/application/applicationApi";
 import "./StatsColumn.css";
 
 const MotionBox = Motion(Box);
 
 export default function StatsColumn({ column, items }) {
+    const [interviewModal, setInterviewModal] = useState({ open: false, item: null });
+    const [updateStatus, { isLoading: isUpdating }] = useUpdateApplicationStatusMutation();
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleDrop = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const draggedData = JSON.parse(e.dataTransfer.getData("application/json"));
+        
+        // If dropping to INTERVIEW column, open date picker
+        if (column.id === "INTERVIEW" && draggedData.fromStatus !== "INTERVIEW") {
+            setInterviewModal({ open: true, item: draggedData });
+            return;
+        }
+
+        // For other columns, directly update status
+        try {
+            await updateStatus({
+                applicationId: draggedData.applicationId,
+                newStatusKey: column.id,
+            }).unwrap();
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
+
+    const handleInterviewDateConfirm = async (date) => {
+        try {
+            await updateStatus({
+                applicationId: interviewModal.item.applicationId,
+                newStatusKey: "INTERVIEW",
+                interviewDate: date,
+            }).unwrap();
+            setInterviewModal({ open: false, item: null });
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
+
+    const handleInterviewModalClose = () => {
+        setInterviewModal({ open: false, item: null });
+    };
     return (
         <Box
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
             sx={{    
                 minWidth: 250,
                 maxWidth: 320,
@@ -29,6 +80,10 @@ export default function StatsColumn({ column, items }) {
                 boxShadow: "0 18px 45px rgba(0,0,0,0.45)",
 
                 overflow: "hidden",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                    borderColor: "rgba(255, 255, 255, 0.3)",
+                },
             }}
         >
             {/* Column Header */}
@@ -78,6 +133,9 @@ export default function StatsColumn({ column, items }) {
                     gap: 1.5,
                     p: 2,
                     minHeight: 300,
+                    flex: 1,
+                    overflowY: "auto",
+                    overflowX: "hidden",
                 }}
             >
                 {items.length > 0 ? (
@@ -88,7 +146,11 @@ export default function StatsColumn({ column, items }) {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <StatsCard item={item} columnColor={column.color} />
+                            <StatsCard 
+                                item={item} 
+                                columnColor={column.color}
+                                currentStatus={column.id}
+                            />
                         </Motion.div>
                     ))
                 ) : (
@@ -98,7 +160,7 @@ export default function StatsColumn({ column, items }) {
                             alignItems: "center",
                             justifyContent: "center",
                             minHeight: 200,
-                            color: "rgba(0, 0, 0, 0.3)",
+                            color: "rgba(255, 255, 255, 0.2)",
                             fontSize: "0.9rem",
                             textAlign: "center",
                             flex: 1,
@@ -108,6 +170,15 @@ export default function StatsColumn({ column, items }) {
                     </Box>
                 )}
             </MotionBox>
+
+            {/* Interview Date Modal */}
+            <InterviewDateModal
+                open={interviewModal.open}
+                onClose={handleInterviewModalClose}
+                onConfirm={handleInterviewDateConfirm}
+                jobTitle={interviewModal.item?.title}
+                isLoading={isUpdating}
+            />
         </Box>
     );
 }
