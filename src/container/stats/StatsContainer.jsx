@@ -1,24 +1,64 @@
-import React, { useState } from "react";
-import { Box } from "@mui/material";
+import React, { useMemo } from "react";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import Stats from "../../component/stats/Stats";
+import { useGetUserApplicationsQuery } from "../../features/application/applicationApi";
 
 export default function StatsContainer() {
-    const [stats] = useState({
-        wishlist: [
-            { id: 1, title: "Microsoft", company: "Microsoft", location: "California, USA", icon: "💻" },
-            { id: 2, title: "Google", company: "Google", location: "Mountain View, USA", icon: "🔍" },
-        ],
-        applied: [
-            { id: 3, title: "Amazon", company: "Amazon", location: "Seattle, USA", icon: "📦" },
-        ],
-        interviewing: [
-            { id: 4, title: "Meta", company: "Meta", location: "Menlo Park, USA", icon: "📱" },
-            { id: 5, title: "Apple", company: "Apple", location: "Cupertino, USA", icon: "🍎" },
-        ],
-        offer: [
-            { id: 6, title: "Netflix", company: "Netflix", location: "Los Gatos, USA", icon: "🎬" },
-        ],
-    });
+    const { data: applications, isLoading, error } = useGetUserApplicationsQuery();
+
+    // Transform API data to match Stats component structure
+    const stats = useMemo(() => {
+        if (!applications || typeof applications !== 'object') {
+            return {
+                SAVED: [],
+                APPLIED: [],
+                INTERVIEW: [],
+                OFFER: [],
+                REJECTED: [],
+                NO_RESPONSE: [],
+            };
+        }
+
+        // Log the API response for debugging
+        console.log("API Applications:", applications);
+
+        const transformApps = (apps) => 
+            (apps || []).map(app => ({
+                id: app.applicationId,
+                jobId: app.jobId,
+                title: app.jobTitle,
+                companyName: app.companyName,
+                companyLogo: app.companyLogo,
+                location: "Location",
+                appliedAt: app.appliedAt,
+                interviewDate: app.interviewDate,
+            }));
+
+        return {
+            SAVED: transformApps(applications.SAVED),
+            APPLIED: transformApps(applications.APPLIED),
+            INTERVIEW: transformApps(applications.INTERVIEW),
+            OFFER: transformApps(applications.OFFER),
+            REJECTED: transformApps(applications.REJECTED),
+            NO_RESPONSE: transformApps(applications.NO_RESPONSE),
+        };
+    }, [applications]);
+
+    if (isLoading) {
+        return (
+            <Box sx={{ p: 3, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ p: 3, color: "#fff" }}>
+                <Typography>Error loading applications: {error?.message}</Typography>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ p: 3 }}>

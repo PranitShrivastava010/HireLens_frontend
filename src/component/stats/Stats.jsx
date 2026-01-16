@@ -11,12 +11,12 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ErrorIcon from '@mui/icons-material/Error';
 
 const columns = [
-    { id: "wishlist", title: "SAVED", color: "#1BA5B8", icon: <StarIcon fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
-    { id: "applied", title: "APPLIED", color: "#8B5CF6", icon: <EmailIcon fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
-    { id: "interviewing", title: "INTERVIEW", color: "#22C55E", icon: <BusinessCenterIcon fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
-    { id: "offer", title: "OFFER", color: "#F59E0B", icon: <CelebrationIcon fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
-    {id: "rejected", title: "REJECTED", color: "#EF4444", icon: <ThumbDownIcon fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
-    {id: "noResponse", title: "NO RESPONSE", color: "#6B7280", icon: <ErrorIcon fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
+    { id: "SAVED", title: "SAVED", color: "#1BA5B8", icon: <StarIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
+    { id: "APPLIED", title: "APPLIED", color: "#8B5CF6", icon: <EmailIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
+    { id: "INTERVIEW", title: "INTERVIEW", color: "#22C55E", icon: <BusinessCenterIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
+    { id: "OFFER", title: "OFFER", color: "#F59E0B", icon: <CelebrationIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
+    {id: "REJECTED", title: "REJECTED", color: "#EF4444", icon: <ThumbDownIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
+    {id: "NO_RESPONSE", title: "NO RESPONSE", color: "#6B7280", icon: <ErrorIcon fontFamily="Heading" fontSize="small" sx={{mb: 0.5}}/>, count: 0 },
 ];
 
 export default function Stats({ stats }) {
@@ -35,6 +35,7 @@ export default function Stats({ stats }) {
             {/* Header */}
             <Typography
                 variant="h4"
+                fontFamily={"Heading"}
                 sx={{
                     fontWeight: 700,
                     color: "#fff",
