@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Avatar, IconButton } from "@mui/material";
 import { motion as Motion } from "framer-motion";
 import StatsColumn from "./StatsColumn";
 import InterviewDateModal from "./InterviewDateModal";
+import CommonCard from "../common/CommonCard";
+import InfoIcon from "@mui/icons-material/Info";
 import "./Stats.css";
 import StarIcon from '@mui/icons-material/Star';
 import EmailIcon from '@mui/icons-material/Email';
@@ -18,6 +20,7 @@ import {
     TouchSensor,
     useSensor,
     useSensors,
+    DragOverlay,
 } from "@dnd-kit/core";
 import { useUpdateApplicationStatusMutation } from "../../features/application/applicationApi";
 
@@ -32,7 +35,19 @@ const columns = [
 
 export default function Stats({ stats, onCardInfoClick }) {
     const [interviewModal, setInterviewModal] = useState({ open: false, item: null });
+    const [activeId, setActiveId] = useState(null);
     const [updateStatus] = useUpdateApplicationStatusMutation();
+    
+    // Find the active item being dragged
+    const getActiveItem = () => {
+        if (!activeId) return null;
+        const numericId = activeId.replace("draggable-", "");
+        for (const columnItems of Object.values(stats)) {
+            const item = columnItems.find(i => String(i.id) === numericId);
+            if (item) return item;
+        }
+        return null;
+    };
     
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -44,18 +59,29 @@ export default function Stats({ stats, onCardInfoClick }) {
         useSensor(KeyboardSensor)
     );
 
+    const handleDragStart = (event) => {
+        setActiveId(event.active.id);
+    };
+
     const handleDragEnd = async (event) => {
         const { active, over } = event;
         
-        if (!over) return;
+        if (!over) {
+            setActiveId(null);
+            return;
+        }
         
         const draggedData = active.data.current;
         const targetColumnId = over.id;
         
-        if (!draggedData?.applicationId) return;
+        if (!draggedData?.applicationId) {
+            setActiveId(null);
+            return;
+        }
         
         // If dropping to INTERVIEW column, open date picker
         if (targetColumnId === "INTERVIEW" && draggedData.fromStatus !== "INTERVIEW") {
+            setActiveId(null);
             setInterviewModal({ open: true, item: draggedData });
             return;
         }
@@ -68,7 +94,14 @@ export default function Stats({ stats, onCardInfoClick }) {
             }).unwrap();
         } catch (error) {
             console.error("Error updating status:", error);
+        } finally {
+            // Always clear the overlay after attempting update
+            setActiveId(null);
         }
+    };
+
+    const handleDragCancel = () => {
+        setActiveId(null);
     };
 
     const handleInterviewDateConfirm = async (date) => {
@@ -93,7 +126,9 @@ export default function Stats({ stats, onCardInfoClick }) {
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCorners}
+                onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
+                onDragCancel={handleDragCancel}
             >
             <Box
                 sx={{
@@ -160,6 +195,109 @@ export default function Stats({ stats, onCardInfoClick }) {
                     ))}
                 </Box>
             </Box>
+            <DragOverlay>
+                {activeId ? (
+                    <Box
+                        sx={{
+                            minWidth: 280,
+                            maxWidth: 320,
+                        }}
+                    >
+                        {(() => {
+                            const activeItem = getActiveItem();
+                            if (!activeItem) return null;
+                            
+                            // Render the full card design with info button
+                            return (
+                                <Box sx={{ position: "relative" }}>
+                                    {/* Info Button */}
+                                    <IconButton
+                                        sx={{
+                                            position: "absolute",
+                                            top: -12,
+                                            left: -12,
+                                            width: 32,
+                                            height: 32,
+                                            backgroundColor: "#00d4ff",
+                                            color: "#000",
+                                            zIndex: 10,
+                                            "&:hover": {
+                                                backgroundColor: "#00e5ff",
+                                            },
+                                        }}
+                                        size="small"
+                                    >
+                                        <InfoIcon sx={{ fontSize: "1.2rem" }} />
+                                    </IconButton>
+
+                                    <CommonCard width="100%" cursor="grab">
+                                        <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
+                                            {/* Company Logo */}
+                                            <Avatar
+                                                src={activeItem.companyLogo || ""}
+                                                sx={{
+                                                    width: 40,
+                                                    height: 40,
+                                                    bgcolor: "#1f2933",
+                                                    fontWeight: 700,
+                                                    fontSize: "0.9rem",
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                {!activeItem.companyLogo && activeItem.companyName?.[0]}
+                                            </Avatar>
+
+                                            {/* Job Info */}
+                                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                {/* Title */}
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: 700,
+                                                        fontSize: "0.95rem",
+                                                        mb: 0.5,
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        whiteSpace: "nowrap",
+                                                    }}
+                                                >
+                                                    {activeItem.title}
+                                                </Typography>
+
+                                                {/* Company Name */}
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: "0.8rem",
+                                                        opacity: 0.7,
+                                                        mb: 0.5,
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        whiteSpace: "nowrap",
+                                                    }}
+                                                >
+                                                    {activeItem.companyName}
+                                                </Typography>
+
+                                                {/* Interview Date if exists */}
+                                                {activeItem.interviewDate && (
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize: "0.75rem",
+                                                            opacity: 0.6,
+                                                            color: "#ffd700",
+                                                        }}
+                                                    >
+                                                        📅 {new Date(activeItem.interviewDate).toLocaleDateString()}
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                        </Box>
+                                    </CommonCard>
+                                </Box>
+                            );
+                        })()}
+                    </Box>
+                ) : null}
+            </DragOverlay>
             </DndContext>
             <InterviewDateModal
                 open={interviewModal.open}

@@ -25,7 +25,7 @@ export default function StatsContainer() {
         // Log the API response for debugging
         console.log("API Applications:", applications);
 
-        const transformApps = (apps) => 
+        const transformApps = (apps, statusKey) => 
             (apps || []).map(app => ({
                 id: app.applicationId,
                 jobId: app.jobId,
@@ -35,15 +35,16 @@ export default function StatsContainer() {
                 location: "Location",
                 appliedAt: app.appliedAt,
                 interviewDate: app.interviewDate,
+                status: statusKey,
             }));
 
         return {
-            SAVED: transformApps(applications.SAVED),
-            APPLIED: transformApps(applications.APPLIED),
-            INTERVIEW: transformApps(applications.INTERVIEW),
-            OFFER: transformApps(applications.OFFER),
-            REJECTED: transformApps(applications.REJECTED),
-            NO_RESPONSE: transformApps(applications.NO_RESPONSE),
+            SAVED: transformApps(applications.SAVED, "SAVED"),
+            APPLIED: transformApps(applications.APPLIED, "APPLIED"),
+            INTERVIEW: transformApps(applications.INTERVIEW, "INTERVIEW"),
+            OFFER: transformApps(applications.OFFER, "OFFER"),
+            REJECTED: transformApps(applications.REJECTED, "REJECTED"),
+            NO_RESPONSE: transformApps(applications.NO_RESPONSE, "NO_RESPONSE"),
         };
     }, [applications]);
 

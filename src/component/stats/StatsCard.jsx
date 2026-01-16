@@ -1,13 +1,9 @@
 import React from "react";
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
-import { motion as Motion } from "framer-motion";
 import InfoIcon from "@mui/icons-material/Info";
 import "./StatsCard.css";    
 import CommonCard from "../common/CommonCard";
 import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-
-const MotionDiv = Motion.div;
 
 export default function StatsCard({ item, currentStatus, onInfoClick }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -21,28 +17,34 @@ export default function StatsCard({ item, currentStatus, onInfoClick }) {
         },
     });
 
-    const style = {
-        transform: CSS.Translate.toString(transform),
-        opacity: isDragging ? 0.5 : 1,
-        touchAction: "none",
-        cursor: isDragging ? "grabbing" : "grab",
-    };
+    // Create the transform string
+    const transformString = transform
+        ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+        : undefined;
 
     return (
-        <MotionDiv
+        <div
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            whileHover={{ y: -2 }}
-            transition={{ duration: 0.2 }}
             className="stats-card-wrapper"
-            overflow="hidden"
-            style={style}
+            style={{
+                transform: transformString,
+                opacity: isDragging ? 0 : 1,
+                cursor: isDragging ? "grabbing" : "grab",
+                touchAction: "none",
+                position: "relative",
+                zIndex: isDragging ? 1000 : "auto",
+            }}
         >
             <Box sx={{ position: "relative" }}>
                 {/* Info Button */}
                 <IconButton
-                    onClick={() => onInfoClick?.(item.jobId)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onInfoClick?.(item.jobId);
+                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
                     sx={{
                         position: "absolute",
                         top: -12,
@@ -127,6 +129,6 @@ export default function StatsCard({ item, currentStatus, onInfoClick }) {
                     </Box>
                 </CommonCard>
             </Box>
-        </MotionDiv>
+        </div>
     );
 }

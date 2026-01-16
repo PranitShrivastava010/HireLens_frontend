@@ -1,5 +1,7 @@
 .stats-card-wrapper {
     display: block;
+    will-change: transform;
+    position: relative;
 }
 
 .stats-card-wrapper:hover {
@@ -12,4 +14,9 @@
 
 .stats-card-wrapper:active {
   cursor: grabbing;
+}
+
+.stats-card-wrapper[data-dragging="true"] {
+    opacity: 0 !important;
+    box-shadow: 0 20px 60px rgba(39, 196, 214, 0.5) !important;
 }
