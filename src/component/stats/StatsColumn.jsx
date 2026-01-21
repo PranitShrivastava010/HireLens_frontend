@@ -11,7 +11,7 @@ import {
 
     const MotionBox = Motion(Box);
 
-    export default function StatsColumn({ column, items, onCardInfoClick }) {
+    export default function StatsColumn({ column, items, onCardInfoClick, activeId, }) {
         // Set up droppable zone for this column
         const { setNodeRef } = useDroppable({
             id: column.id,
@@ -100,7 +100,7 @@ import {
                         items.map((item, index) => (
                             <Motion.div
                                 key={item.id}
-                                initial={{ opacity: 0, x: -20 }}
+                                initial={false}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, delay: index * 0.1 }}
                             >
@@ -109,6 +109,7 @@ import {
                                 columnColor={column.color}
                                 currentStatus={column.id}
                                 onInfoClick={onCardInfoClick}
+                                activeId={activeId}
                             />
                             </Motion.div>
                         ))

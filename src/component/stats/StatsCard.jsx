@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
-import "./StatsCard.css";    
+import "./StatsCard.css";
 import CommonCard from "../common/CommonCard";
 import { useDraggable } from "@dnd-kit/core";
 
-export default function StatsCard({ item, currentStatus, onInfoClick }) {
+export default function StatsCard({ item, onInfoClick, activeId }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: `draggable-${item.id}`,
         data: {
@@ -13,14 +13,22 @@ export default function StatsCard({ item, currentStatus, onInfoClick }) {
             jobId: item.jobId,
             title: item.title,
             companyName: item.companyName,
-            fromStatus: currentStatus,
         },
     });
 
     // Create the transform string
-    const transformString = transform
-        ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-        : undefined;
+    const style = {
+        transform: transform
+            ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+            : undefined,
+        opacity: isDragging ? 0 : 1, // ✅ ONLY hide while dragging
+        cursor: isDragging ? "grabbing" : "grab",
+        touchAction: "none",
+        transition: "opacity 0.15s ease",
+    };
+
+    // Check if this card is the one being dragged
+    const isBeingDragged = activeId === `draggable-${item.id}`;
 
     return (
         <div
@@ -28,14 +36,7 @@ export default function StatsCard({ item, currentStatus, onInfoClick }) {
             {...listeners}
             {...attributes}
             className="stats-card-wrapper"
-            style={{
-                transform: transformString,
-                opacity: isDragging ? 0 : 1,
-                cursor: isDragging ? "grabbing" : "grab",
-                touchAction: "none",
-                position: "relative",
-                zIndex: isDragging ? 1000 : "auto",
-            }}
+            style={style}
         >
             <Box sx={{ position: "relative" }}>
                 {/* Info Button */}
