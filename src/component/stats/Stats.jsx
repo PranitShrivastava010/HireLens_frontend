@@ -114,8 +114,6 @@ export default function Stats({ stats, onCardInfoClick }) {
 
         // If dropping to INTERVIEW column, open date picker
         if (targetColumnId === "INTERVIEW" && draggedData.fromStatus !== "INTERVIEW") {
-            fireFullScreenCelebration();
-
             setActiveId(null);
             setDragInfo({ applicationId: null, fromStatus: null, toStatus: null });
             setInterviewModal({ open: true, item: draggedData });
@@ -162,6 +160,7 @@ export default function Stats({ stats, onCardInfoClick }) {
                 newStatusKey: "INTERVIEW",
                 interviewDate: date,
             }).unwrap();
+            fireFullScreenCelebration();
             setInterviewModal({ open: false, item: null });
         } catch (error) {
             console.error("Error updating status:", error);

@@ -10,6 +10,7 @@ import JobPage from "../pages/JobPage";
 import RequireJobPreferences from "./RequiredJobPreference";
 import JobPreferencePage from "../pages/JobPreferencePage";
 import StatsPage from "../pages/StatsPage";
+import ResumeBuilderContainer from "../container/resume/ResumeBuilderContainer";
 
 export default function Router() {
     return (
@@ -52,6 +53,10 @@ export default function Router() {
                 <Route
                     path="/stats"
                     element={<StatsPage />}
+                />
+                <Route
+                    path="/resume"
+                    element={<ResumeBuilderContainer/>}
                 />
             </Route>
         </Routes>

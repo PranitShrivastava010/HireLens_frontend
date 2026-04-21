@@ -16,34 +16,58 @@ const baseQuery = fetchBaseQuery({
 /**
  * 🔥 THIS IS THE INTERCEPTOR
  */
+let isRefreshing = false;
+let refreshPromise = null;
+
 const baseQueryWithReauth = async (args, api, extraOptions) => {
+  // If a refresh is already in progress, wait for it before making any new request
+  if (isRefreshing && refreshPromise) {
+    await refreshPromise;
+  }
+
   let result = await baseQuery(args, api, extraOptions);
 
-  // Access token expired
   if (result?.error?.status === 401) {
-    console.log("Access token expired. Refreshing...");
+    if (!isRefreshing) {
+      isRefreshing = true;
+      refreshPromise = (async () => {
+        try {
+          console.log("Access token expired. Refreshing...");
+          const refreshResult = await baseQuery(
+            { url: "/api/auth/refresh", method: "POST" },
+            api,
+            extraOptions
+          );
 
-    // Call refresh token endpoint
-    const refreshResult = await baseQuery(
-      { url: "/api/auth/refresh", method: "POST" },
-      api,
-      extraOptions
-    );
+          if (refreshResult?.data?.accessToken) {
+            api.dispatch(
+              setCredentials({
+                accessToken: refreshResult.data.accessToken,
+                user: api.getState().auth.user,
+              })
+            );
+            return true;
+          } else {
+            api.dispatch(logout());
+            return false;
+          }
+        } catch (error) {
+          api.dispatch(logout());
+          return false;
+        } finally {
+          isRefreshing = false;
+          refreshPromise = null;
+        }
+      })();
 
-    if (refreshResult?.data?.accessToken) {
-      // Save new access token
-      api.dispatch(
-        setCredentials({
-          accessToken: refreshResult.data.accessToken,
-          user: api.getState().auth.user, // keep existing user
-        })
-      );
-
-      // Retry original request
-      result = await baseQuery(args, api, extraOptions);
+      const success = await refreshPromise;
+      if (success) {
+        result = await baseQuery(args, api, extraOptions);
+      }
     } else {
-      // Refresh failed → logout
-      api.dispatch(logout());
+      // Wait for the existing refresh to finish and retry
+      await refreshPromise;
+      result = await baseQuery(args, api, extraOptions);
     }
   }
 
@@ -52,6 +76,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const rtkApi = createApi({
   reducerPath: "rtkApi",
-  baseQuery: baseQueryWithReauth, // 👈 interceptor attached here
+  baseQuery: baseQueryWithReauth,
+  tagTypes: ["ResumePreview"],
   endpoints: () => ({}),
 });
