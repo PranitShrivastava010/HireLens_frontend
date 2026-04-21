@@ -1,4 +1,5 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 import React from "react";
 import {
     BarChart,
@@ -13,7 +14,34 @@ import {
     Pie,
     Cell
 } from 'recharts';
+import CommonCard from "../common/CommonCard";
 // import { RechartsDevtools } from '@recharts/devtools';
+
+const MotionCard = motion(CommonCard)
+
+const fadeInOut = {
+    hidden: {
+        opacity: 0,
+        y: 30,
+    },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut",
+        },
+    },
+    exit: {
+        opacity: 0,
+        y: -20,
+        transition: {
+            duration: 0.4,
+            ease: "easeIn",
+        },
+    },
+};
+
 
 export default function DashboardComponent({
     greeting,
@@ -89,7 +117,7 @@ export default function DashboardComponent({
                 <Typography
                     variant="h4"
                     fontWeight={600}
-                    sx={{ color: "#222", fontFamily: "Heading" }}
+                    sx={{ color: "#faf9f9", fontFamily: "Heading" }}
                 >
                     {greeting} 👋
                 </Typography>
@@ -105,7 +133,27 @@ export default function DashboardComponent({
                 </Typography>
             </Box>
             <Box sx={{ ml: 3, mt: 5, display: "flex", gap: 5 }}>
-                <Card sx={{ width: "50%", borderRadius: 3 }}>
+                <MotionCard
+                    variants={fadeInOut}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    // sx={{
+                    //     width: "50%",
+                    //     borderRadius: 3,
+                    //     background: "rgba(240, 240, 240, 0.6)", // light grey glass
+                    //     backdropFilter: "blur(10px)",            // frosted effect
+                    //     WebkitBackdropFilter: "blur(10px)",      // Safari support
+                    //     border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+                    //     boxShadow: "0 8px 24px rgba(0,0,0,0.05)",     // soft shadow
+                    //     color: "#222",                            // darker text for contrast
+                    //     transition: "all 0.3s ease",
+                    //     ":hover": {
+                    //         background: "rgba(240, 240, 240, 0.75)",
+                    //         boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
+                    //     },
+                    // }}
+                >
                     <CardContent sx={{ height: 350 }}>
                         <Typography variant="subtitle1" fontWeight={600}>
                             Weekly Progress
@@ -174,10 +222,30 @@ export default function DashboardComponent({
                             </Typography>
                         </Box>
                     </CardContent>
-                </Card>
-                <Card sx={{ width: "50%", borderRadius: 3 }}>
+                </MotionCard>
+                <MotionCard
+                    variants={fadeInOut}
+                    initial="hidden"
+                    animate="visible"
+                    // exit="exit"
+                    // sx={{
+                    //     width: "50%",
+                    //     borderRadius: 3,
+                    //     background: "rgba(240, 240, 240, 0.6)", // light grey glass
+                    //     backdropFilter: "blur(10px)",            // frosted effect
+                    //     WebkitBackdropFilter: "blur(10px)",      // Safari support
+                    //     border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+                    //     boxShadow: "0 8px 24px rgba(0,0,0,0.05)",     // soft shadow
+                    //     color: "#222",                            // darker text for contrast
+                    //     transition: "all 0.3s ease",
+                    //     ":hover": {
+                    //         background: "rgba(240, 240, 240, 0.75)",
+                    //         boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
+                    //     },
+                    // }}
+                >
                     <CardContent sx={{ height: 350 }}>
-                        <Typography variant="subtitle1" fontWeight={600} sx={{mb: -5}}>
+                        <Typography variant="subtitle1" fontWeight={600} sx={{ mb: -5 }}>
                             Summary
                         </Typography>
                         <ResponsiveContainer width="100%" height="100%">
@@ -205,14 +273,34 @@ export default function DashboardComponent({
                             </PieChart>
                         </ResponsiveContainer>
                     </CardContent>
-                </Card>
+                </MotionCard>
             </Box>
             <Box sx={{ mt: 5, ml: 3 }}>
-                <Card sx={{ borderRadius: 3 }}>
+                <MotionCard
+                    variants={fadeInOut}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    width="95%"
+                    // sx={{
+                    //     borderRadius: 3,
+                    //     background: "rgba(240, 240, 240, 0.6)", // light grey glass
+                    //     backdropFilter: "blur(10px)",            // frosted effect
+                    //     WebkitBackdropFilter: "blur(10px)",      // Safari support
+                    //     border: "1px solid rgba(200, 200, 200, 0.5)", // subtle grey border
+                    //     boxShadow: "0 8px 24px rgba(0,0,0,0.05)",     // soft shadow
+                    //     color: "#222",                            // darker text for contrast
+                    //     transition: "all 0.3s ease",
+                    //     ":hover": {
+                    //         background: "rgba(240, 240, 240, 0.75)",
+                    //         boxShadow: "0 12px 32px rgba(0,0,0,0.1)",
+                    //     },
+                    // }}
+                >
                     <CardContent
                         sx={{
-                            height: 350,      // ✅ REQUIRED
-                            minHeight: 300,   // extra safety
+                            height: 350,
+                            minHeight: 300,
                         }}
                     >
                         <ResponsiveContainer width="100%" height="100%">
@@ -227,7 +315,7 @@ export default function DashboardComponent({
                                     fill="#8884d8"
                                     radius={[8, 8, 0, 0]}
                                     barSize={15}
-                                    isAnimationActive={true}     
+                                    isAnimationActive={true}
                                     animationBegin={200}
                                     animationDuration={800}
                                     animationEasing="ease-out"
@@ -237,7 +325,7 @@ export default function DashboardComponent({
                                     fill="#82ca9d"
                                     radius={[8, 8, 0, 0]}
                                     barSize={15}
-                                    isAnimationActive={true} 
+                                    isAnimationActive={true}
                                     animationBegin={300}
                                     animationDuration={900}
                                     animationEasing="ease-out"
@@ -245,7 +333,7 @@ export default function DashboardComponent({
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
-                </Card>
+                </MotionCard>
             </Box>
         </Box>
     )
