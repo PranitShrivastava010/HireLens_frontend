@@ -1,7 +1,7 @@
 import { motion as Motion } from "framer-motion";
 import HeroHeadline from "./HeroHeadline";
 import HeroSubtitle from "./HeroSubtitle";
-import HeroVisual from "./heroVisual";
+import HeroVisual from "./HeroVisual";
 import CommonButton from "../common/CommonButton";
 import ThreeBackground from "../common/ThreeBackground";
 

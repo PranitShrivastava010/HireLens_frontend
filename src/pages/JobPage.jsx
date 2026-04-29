@@ -1,4 +1,4 @@
-import JobsContainer from "../container/job/jobContainer";
+import JobsContainer from "../container/job/JobContainer";
 
 export default function JobPage() {
     return(
