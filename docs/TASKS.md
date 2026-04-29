@@ -58,7 +58,7 @@
 
 ---
 
-### TASK-F-05 — Dashboard Page — Real Stats 🔲
+### TASK-F-05 — Dashboard Page — Real Stats ✅
 **Problem:** Dashboard page is a scaffold/placeholder with no real data.  
 **Goal:** Wire `DashboardContainer` to `GET /api/dashboard/stats` (requires TASK-B-04 backend task). Show:
 - Total applications count

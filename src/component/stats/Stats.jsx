@@ -138,6 +138,7 @@ export default function Stats({ stats, onCardInfoClick }) {
         try {
             await updateStatus({
                 applicationId: draggedData.applicationId,
+                currentStatusKey: fromStatus,
                 newStatusKey: targetColumnId,
             }).unwrap();
             // Don't clear activeId here - wait for stats to update
@@ -157,6 +158,7 @@ export default function Stats({ stats, onCardInfoClick }) {
         try {
             await updateStatus({
                 applicationId: interviewModal.item.applicationId,
+                currentStatusKey: interviewModal.item.fromStatus,
                 newStatusKey: "INTERVIEW",
                 interviewDate: date,
             }).unwrap();

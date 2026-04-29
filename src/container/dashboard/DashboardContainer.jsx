@@ -1,10 +1,21 @@
 import { useSelector } from "react-redux";
 import DashboardComponent from "../../component/dashboard/DashboardComponent";
 import { useEffect, useState } from "react";
+import { useGetDashboardStatsQuery, useUpdateWeeklyGoalMutation } from "../../features/dashboard/dashboardApi";
 
 export default function DashboardContainer() {
 
     const { user } = useSelector((state) => state.auth)
+    const { data: stats, isLoading } = useGetDashboardStatsQuery();
+    const [updateGoal] = useUpdateWeeklyGoalMutation();
+
+    const handleUpdateGoal = async (newGoal) => {
+        try {
+            await updateGoal(newGoal).unwrap();
+        } catch (error) {
+            console.error("Failed to update goal:", error);
+        }
+    }
 
     const getGreeting = () => {
         const hour = new Date().getHours();
@@ -36,20 +47,16 @@ export default function DashboardContainer() {
         return () => clearTimeout(timeout);
     }, [greeting]);
 
-    const applied = 1
-    const goal = 10
-
-    const percentage = Math.min((applied / goal) * 100, 100);
-
     const greetingWithName = user?.name ? `${greeting}, ${user.name}` : greeting;
+
+    if (isLoading) return null; // Or a loader
 
     return (
         <DashboardComponent
             greeting={greetingWithName}
-            applied={applied}
-            goal={goal}
-            percentage={percentage}
-
+            stats={stats}
+            onUpdateGoal={handleUpdateGoal}
         />
     )
 }
+
