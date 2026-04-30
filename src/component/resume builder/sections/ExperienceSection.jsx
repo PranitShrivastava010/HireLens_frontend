@@ -1,249 +1,259 @@
 import React, { useState } from "react";
-import CommonCard from "../../common/CommonCard";
+import ResumeSectionCard from "../ResumeSectionCard";
 import "../resumeBuilder.css";
 
-export default function ExperienceSection({ section, isExpanded, onToggle, data, onDataChange }) {
-  const [experiences, setExperiences] = useState(data || []);
+const createEmptyExperience = () => ({
+  company: "",
+  role: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  isCurrent: false,
+  bullets: [""],
+});
+
+const mapExperienceToDraft = (experience) => ({
+  company: experience.company || "",
+  role: experience.role || "",
+  location: experience.location || "",
+  startDate: experience.startDate?.slice(0, 10) || "",
+  endDate: experience.endDate?.slice(0, 10) || "",
+  isCurrent: Boolean(experience.isCurrent),
+  bullets: experience.bullets?.length ? [...experience.bullets] : [""],
+});
+
+export default function ExperienceSection({
+  isExpanded,
+  onToggle,
+  data = [],
+  onCreate,
+  onUpdate,
+  onDelete,
+  loading,
+}) {
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState(null);
+  const [draft, setDraft] = useState(null);
 
-  const handleAddExperience = () => {
-    const newExperience = {
-      id: Date.now().toString(),
-      company: "",
-      role: "",
-      location: "",
-      duration: "",
-      startDate: "",
-      endDate: null,
-      isCurrent: false,
-      bullets: [],
-      orderIndex: experiences.length,
-    };
-    setFormData(newExperience);
-    setEditingId(newExperience.id);
+  const startCreate = () => {
+    setEditingId(null);
+    setDraft(createEmptyExperience());
   };
 
-  const handleEditExperience = (experience) => {
-    setFormData({ ...experience });
+  const startEdit = (experience) => {
     setEditingId(experience.id);
+    setDraft(mapExperienceToDraft(experience));
   };
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+  const resetForm = () => {
+    setEditingId(null);
+    setDraft(null);
+  };
+
+  const handleChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    setDraft((current) => ({
+      ...current,
       [name]: type === "checkbox" ? checked : value,
-    });
+      ...(name === "isCurrent" && checked ? { endDate: "" } : {}),
+    }));
   };
 
   const handleBulletChange = (index, value) => {
-    const newBullets = [...(formData.bullets || [])];
-    newBullets[index] = value;
-    setFormData({
-      ...formData,
-      bullets: newBullets,
+    setDraft((current) => {
+      const nextBullets = [...current.bullets];
+      nextBullets[index] = value;
+
+      return {
+        ...current,
+        bullets: nextBullets,
+      };
     });
   };
 
-  const handleAddBullet = () => {
-    setFormData({
-      ...formData,
-      bullets: [...(formData.bullets || []), ""],
+  const addBullet = () => {
+    setDraft((current) => ({
+      ...current,
+      bullets: [...current.bullets, ""],
+    }));
+  };
+
+  const removeBullet = (index) => {
+    setDraft((current) => {
+      const nextBullets = current.bullets.filter((_, itemIndex) => itemIndex !== index);
+      return {
+        ...current,
+        bullets: nextBullets.length ? nextBullets : [""],
+      };
     });
   };
 
-  const handleRemoveBullet = (index) => {
-    const newBullets = formData.bullets.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      bullets: newBullets,
-    });
-  };
+  const handleSave = async () => {
+    if (!draft) {
+      return;
+    }
 
-  const handleSaveExperience = () => {
-    const updatedExperiences = editingId
-      ? experiences.map((exp) => (exp.id === editingId ? formData : exp))
-      : [...experiences, formData];
-    setExperiences(updatedExperiences);
-    onDataChange(updatedExperiences);
-    setEditingId(null);
-    setFormData(null);
-  };
+    if (editingId) {
+      await onUpdate(editingId, draft);
+    } else {
+      await onCreate(draft);
+    }
 
-  const handleDeleteExperience = (id) => {
-    const updatedExperiences = experiences.filter((exp) => exp.id !== id);
-    setExperiences(updatedExperiences);
-    onDataChange(updatedExperiences);
+    resetForm();
   };
 
   return (
-    <CommonCard
-      className={`resume-section-card ${isExpanded ? "expanded" : ""}`}
-      onClick={onToggle}
+    <ResumeSectionCard
+      title="Work Experience"
+      icon="EXP"
+      count={data.length}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      description="Company, role, date range, and impact bullets."
     >
-      <div className="resume-card-header">
-        <div className="resume-card-title">
-          <span className="card-icon">{section.icon}</span>
-          <h3>{section.title}</h3>
-          {experiences.length > 0 && (
-            <span className="section-count">{experiences.length}</span>
-          )}
-        </div>
-        <button className={`expand-arrow ${isExpanded ? "rotated" : ""}`}>
-          →
-        </button>
+      <div className="section-items">
+        {data.map((experience) => (
+          <div key={experience.id} className="item-preview">
+            <div className="item-header">
+              <h4>{experience.company}</h4>
+              <span className="company-info">
+                {experience.role}
+                {experience.location ? ` - ${experience.location}` : ""}
+              </span>
+            </div>
+
+            <div className="item-actions">
+              <button
+                type="button"
+                className="btn-small btn-edit"
+                onClick={() => startEdit(experience)}
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                className="btn-small btn-delete"
+                onClick={() => onDelete(experience.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {isExpanded && (
-        <div className="resume-card-content">
-          {/* List of existing experiences */}
-          <div className="section-items">
-            {experiences.map((experience) => (
-              <div key={experience.id} className="item-preview">
-                <div className="item-header">
-                  <h4>{experience.role}</h4>
-                  <span className="company-info">{experience.company}</span>
-                </div>
-                <div className="item-actions">
-                  <button
-                    className="btn-small btn-edit"
-                    onClick={() => handleEditExperience(experience)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn-small btn-delete"
-                    onClick={() => handleDeleteExperience(experience.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+      {draft ? (
+        <div className="form-container">
+          <div className="form-row">
+            <div className="form-group">
+              <label>Company</label>
+              <input
+                type="text"
+                name="company"
+                value={draft.company}
+                onChange={handleChange}
+                placeholder="Techstalwarts"
+              />
+            </div>
+            <div className="form-group">
+              <label>Role</label>
+              <input
+                type="text"
+                name="role"
+                value={draft.role}
+                onChange={handleChange}
+                placeholder="Associate Full Stack Developer"
+              />
+            </div>
           </div>
 
-          {/* Edit/Add form */}
-          {editingId && formData && (
-            <div className="form-container">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Job Title</label>
-                  <input
-                    type="text"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    placeholder="Senior Developer"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Company</label>
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleInputChange}
-                    placeholder="Tech Company Inc."
-                  />
-                </div>
-              </div>
+          <div className="form-group">
+            <label>Location</label>
+            <input
+              type="text"
+              name="location"
+              value={draft.location}
+              onChange={handleChange}
+              placeholder="Bhopal, India"
+            />
+          </div>
 
-              <div className="form-group">
-                <label>Location</label>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Start date</label>
+              <input
+                type="date"
+                name="startDate"
+                value={draft.startDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>End date</label>
+              <input
+                type="date"
+                name="endDate"
+                value={draft.endDate}
+                onChange={handleChange}
+                disabled={draft.isCurrent}
+              />
+            </div>
+          </div>
+
+          <label className="checkbox-row">
+            <input
+              type="checkbox"
+              name="isCurrent"
+              checked={draft.isCurrent}
+              onChange={handleChange}
+            />
+            <span>I currently work here</span>
+          </label>
+
+          <div className="form-group">
+            <label>Impact bullets</label>
+            {draft.bullets.map((bullet, index) => (
+              <div key={`${index}-${bullet}`} className="bullet-input-group">
                 <input
                   type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder="San Francisco, CA"
+                  value={bullet}
+                  onChange={(event) =>
+                    handleBulletChange(index, event.target.value)
+                  }
+                  placeholder="Quantify your contribution or result."
                 />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Start Date</label>
-                  <input
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>End Date</label>
-                  <input
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate || ""}
-                    onChange={handleInputChange}
-                    disabled={formData.isCurrent}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group checkbox">
-                <input
-                  type="checkbox"
-                  name="isCurrent"
-                  checked={formData.isCurrent}
-                  onChange={handleInputChange}
-                  id="isCurrent"
-                />
-                <label htmlFor="isCurrent">I currently work here</label>
-              </div>
-
-              <div className="form-group">
-                <label>Key Achievements</label>
-                {formData.bullets?.map((bullet, index) => (
-                  <div key={index} className="bullet-input-group">
-                    <input
-                      type="text"
-                      value={bullet}
-                      onChange={(e) => handleBulletChange(index, e.target.value)}
-                      placeholder="Add a bullet point..."
-                    />
-                    <button
-                      className="btn-remove-bullet"
-                      onClick={() => handleRemoveBullet(index)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
                 <button
-                  className="btn-add-bullet"
-                  onClick={handleAddBullet}
+                  type="button"
+                  className="btn-remove-bullet"
+                  onClick={() => removeBullet(index)}
                 >
-                  + Add Bullet Point
+                  x
                 </button>
               </div>
-
-              <div className="resume-card-actions">
-                <button className="btn-save" onClick={handleSaveExperience}>
-                  Save
-                </button>
-                <button
-                  className="btn-cancel"
-                  onClick={() => {
-                    setEditingId(null);
-                    setFormData(null);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Add new button */}
-          {!editingId && (
-            <button className="btn-add-section" onClick={handleAddExperience}>
-              + Add Experience
+            ))}
+            <button type="button" className="btn-add-bullet" onClick={addBullet}>
+              + Add bullet
             </button>
-          )}
+          </div>
+
+          <div className="resume-card-actions">
+            <button
+              type="button"
+              className="btn-save"
+              onClick={handleSave}
+              disabled={loading}
+            >
+              Save
+            </button>
+            <button type="button" className="btn-cancel" onClick={resetForm}>
+              Cancel
+            </button>
+          </div>
         </div>
+      ) : (
+        <button type="button" className="btn-add-section" onClick={startCreate}>
+          + Add experience
+        </button>
       )}
-    </CommonCard>
+    </ResumeSectionCard>
   );
 }

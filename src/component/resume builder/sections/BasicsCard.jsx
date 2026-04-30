@@ -1,250 +1,253 @@
-import React, { useState } from "react";
-import CommonCard from "../../common/CommonCard";
+import React, { useEffect, useState } from "react";
+import ResumeSectionCard from "../ResumeSectionCard";
 import "../resumeBuilder.css";
 
-export default function BasicsCard({ section, isExpanded, onToggle, data, onDataChange }) {
-  const [formData, setFormData] = useState(data || {
-    fullName: "",
-    headline: "",
-    summary: "",
-    contact: {
-      email: "",
-      phone: "",
-      location: "",
-      links: [],
-    },
-  });
+const createInitialState = (data, customLinks) => ({
+  fullName: data?.fullName || "",
+  headline: data?.headline || "",
+  summary: data?.summary || "",
+  email: data?.email || "",
+  phone: data?.phone || "",
+  location: data?.location || "",
+  linkedin: data?.linkedin || "",
+  github: data?.github || "",
+  customLinks:
+    customLinks?.map((link, index) => ({
+      id: link.id || `custom-link-${index + 1}`,
+      label: link.label || "",
+      url: link.url || "",
+    })) || [],
+});
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+export default function BasicsCard({
+  isExpanded,
+  onToggle,
+  data,
+  customLinks,
+  onSave,
+  loading,
+}) {
+  const [formState, setFormState] = useState(
+    createInitialState(data, customLinks)
+  );
 
-    if (name.startsWith("contact.")) {
-      const contactField = name.split(".")[1];
-      if (contactField === "email" || contactField === "phone" || contactField === "location") {
-        setFormData({
-          ...formData,
-          contact: {
-            ...formData.contact,
-            [contactField]: value,
-          },
-        });
-      }
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+  useEffect(() => {
+    setFormState(createInitialState(data, customLinks));
+  }, [customLinks, data]);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+    }));
   };
 
-  const handleLinkChange = (index, field, value) => {
-    const newLinks = [...(formData.contact?.links || [])];
-    if (!newLinks[index]) {
-      newLinks[index] = { label: "", url: "" };
-    }
-    newLinks[index][field] = value;
-    setFormData({
-      ...formData,
-      contact: {
-        ...formData.contact,
-        links: newLinks,
-      },
+  const handleCustomLinkChange = (index, field, value) => {
+    setFormState((current) => {
+      const nextLinks = [...current.customLinks];
+      nextLinks[index] = {
+        ...nextLinks[index],
+        [field]: value,
+      };
+
+      return {
+        ...current,
+        customLinks: nextLinks,
+      };
     });
   };
 
-  const handleAddLink = () => {
-    setFormData({
-      ...formData,
-      contact: {
-        ...formData.contact,
-        links: [...(formData.contact?.links || []), { label: "", url: "" }],
-      },
-    });
+  const handleAddCustomLink = () => {
+    setFormState((current) => ({
+      ...current,
+      customLinks: [
+        ...current.customLinks,
+        {
+          id: `custom-link-${Date.now()}`,
+          label: "",
+          url: "",
+        },
+      ],
+    }));
   };
 
-  const handleRemoveLink = (index) => {
-    const newLinks = formData.contact?.links?.filter((_, i) => i !== index) || [];
-    setFormData({
-      ...formData,
-      contact: {
-        ...formData.contact,
-        links: newLinks,
-      },
-    });
+  const handleRemoveCustomLink = (index) => {
+    setFormState((current) => ({
+      ...current,
+      customLinks: current.customLinks.filter((_, itemIndex) => itemIndex !== index),
+    }));
   };
 
-  const handleSave = () => {
-    onDataChange(formData);
+  const handleSave = async () => {
+    await onSave(formState);
+    onToggle();
+  };
+
+  const handleCancel = () => {
+    setFormState(createInitialState(data, customLinks));
     onToggle();
   };
 
   return (
-    <CommonCard
-      className={`resume-section-card ${isExpanded ? "expanded" : ""}`}
-      onClick={onToggle}
+    <ResumeSectionCard
+      title="Header & Summary"
+      icon="ID"
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      description="Contact details, summary, and clickable custom links."
     >
-      <div className="resume-card-header">
-        <div className="resume-card-title">
-          <span className="card-icon">{section.icon}</span>
-          <h3>{section.title}</h3>
-        </div>
-        <button className={`expand-arrow ${isExpanded ? "rotated" : ""}`}>
-          →
-        </button>
+      <div className="form-group">
+        <label>Full name</label>
+        <input
+          type="text"
+          name="fullName"
+          value={formState.fullName}
+          onChange={handleInputChange}
+          placeholder="Pranit Shrivastava"
+        />
       </div>
 
-      {isExpanded && (
-        <div className="resume-card-content">
-          <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName || ""}
-              onChange={handleInputChange}
-              placeholder="John Doe"
-            />
-          </div>
+      <div className="form-group">
+        <label>Headline</label>
+        <input
+          type="text"
+          name="headline"
+          value={formState.headline}
+          onChange={handleInputChange}
+          placeholder="Full Stack Developer"
+        />
+      </div>
 
-          <div className="form-group">
-            <label>Professional Headline</label>
-            <input
-              type="text"
-              name="headline"
-              value={formData.headline || ""}
-              onChange={handleInputChange}
-              placeholder="Senior Full Stack Developer"
-            />
-          </div>
+      <div className="form-group">
+        <label>Summary</label>
+        <textarea
+          className="resume-textarea"
+          name="summary"
+          value={formState.summary}
+          onChange={handleInputChange}
+          placeholder="Concise overview focused on roles, systems, and measurable impact."
+        />
+      </div>
 
-          <div className="form-group">
-            <label>Professional Summary</label>
-            <textarea
-              name="summary"
-              value={formData.summary || ""}
-              onChange={handleInputChange}
-              placeholder="Brief overview of your professional background and goals..."
-              className="resume-textarea"
-            />
-          </div>
+      <div className="form-row">
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            value={formState.email}
+            onChange={handleInputChange}
+            placeholder="name@example.com"
+          />
+        </div>
+        <div className="form-group">
+          <label>Phone</label>
+          <input
+            type="tel"
+            name="phone"
+            value={formState.phone}
+            onChange={handleInputChange}
+            placeholder="+91 98765 43210"
+          />
+        </div>
+      </div>
 
+      <div className="form-row">
+        <div className="form-group">
+          <label>Location</label>
+          <input
+            type="text"
+            name="location"
+            value={formState.location}
+            onChange={handleInputChange}
+            placeholder="Bhopal, Madhya Pradesh"
+          />
+        </div>
+        <div className="form-group">
+          <label>LinkedIn</label>
+          <input
+            type="url"
+            name="linkedin"
+            value={formState.linkedin}
+            onChange={handleInputChange}
+            placeholder="https://linkedin.com/in/your-handle"
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>GitHub</label>
+        <input
+          type="url"
+          name="github"
+          value={formState.github}
+          onChange={handleInputChange}
+          placeholder="https://github.com/your-handle"
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Custom clickable links</label>
+        <div className="inline-note">
+          Add any label you want. The label becomes the clickable text in the
+          preview and PDF.
+        </div>
+      </div>
+
+      {formState.customLinks.map((link, index) => (
+        <div key={link.id} className="link-item">
           <div className="form-row">
             <div className="form-group">
-              <label>Email</label>
+              <label>Label</label>
               <input
-                type="email"
-                name="contact.email"
-                value={formData.contact?.email || ""}
-                onChange={handleInputChange}
-                placeholder="john@example.com"
+                type="text"
+                value={link.label}
+                onChange={(event) =>
+                  handleCustomLinkChange(index, "label", event.target.value)
+                }
+                placeholder="Portfolio"
               />
             </div>
             <div className="form-group">
-              <label>Phone</label>
+              <label>URL</label>
               <input
-                type="tel"
-                name="contact.phone"
-                value={formData.contact?.phone || ""}
-                onChange={handleInputChange}
-                placeholder="+1 (555) 123-4567"
+                type="url"
+                value={link.url}
+                onChange={(event) =>
+                  handleCustomLinkChange(index, "url", event.target.value)
+                }
+                placeholder="https://your-site.com"
               />
             </div>
           </div>
-
-          <div className="form-group">
-            <label>Location</label>
-            <input
-              type="text"
-              name="contact.location"
-              value={formData.contact?.location || ""}
-              onChange={handleInputChange}
-              placeholder="San Francisco, CA"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>LinkedIn Profile URL</label>
-            <input
-              type="url"
-              value={formData.contact?.links?.find(l => l.label === "linkedin")?.url || ""}
-              onChange={(e) =>
-                handleLinkChange(
-                  formData.contact?.links?.findIndex(l => l.label === "linkedin") ?? -1,
-                  "url",
-                  e.target.value
-                )
-              }
-              placeholder="https://linkedin.com/in/johndoe"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>GitHub Profile URL</label>
-            <input
-              type="url"
-              value={formData.contact?.links?.find(l => l.label === "github")?.url || ""}
-              onChange={(e) =>
-                handleLinkChange(
-                  formData.contact?.links?.findIndex(l => l.label === "github") ?? -1,
-                  "url",
-                  e.target.value
-                )
-              }
-              placeholder="https://github.com/johndoe"
-            />
-          </div>
-
-          {/* Additional Links */}
-          {formData.contact?.links?.map((link, idx) => {
-            if (link.label !== "linkedin" && link.label !== "github") {
-              return (
-                <div key={idx} className="link-item">
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Link Label</label>
-                      <input
-                        type="text"
-                        value={link.label}
-                        onChange={(e) => handleLinkChange(idx, "label", e.target.value)}
-                        placeholder="e.g., Portfolio, Website"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Link URL</label>
-                      <input
-                        type="url"
-                        value={link.url}
-                        onChange={(e) => handleLinkChange(idx, "url", e.target.value)}
-                        placeholder="https://example.com"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    className="btn-remove-bullet"
-                    onClick={() => handleRemoveLink(idx)}
-                  >
-                    ✕
-                  </button>
-                </div>
-              );
-            }
-            return null;
-          })}
-
-          <button className="btn-add-bullet" onClick={handleAddLink}>
-            + Add Additional Link
+          <button
+            type="button"
+            className="btn-remove-bullet"
+            onClick={() => handleRemoveCustomLink(index)}
+          >
+            x
           </button>
-
-          <div className="resume-card-actions">
-            <button className="btn-save" onClick={handleSave}>
-              Save
-            </button>
-            <button className="btn-cancel" onClick={onToggle}>
-              Cancel
-            </button>
-          </div>
         </div>
-      )}
-    </CommonCard>
+      ))}
+
+      <button type="button" className="btn-add-bullet" onClick={handleAddCustomLink}>
+        + Add custom link
+      </button>
+
+      <div className="resume-card-actions">
+        <button
+          type="button"
+          className="btn-save"
+          onClick={handleSave}
+          disabled={loading}
+        >
+          Save
+        </button>
+        <button type="button" className="btn-cancel" onClick={handleCancel}>
+          Cancel
+        </button>
+      </div>
+    </ResumeSectionCard>
   );
 }

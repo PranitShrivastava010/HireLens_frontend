@@ -1,5 +1,8 @@
 .glass-card {
   position: relative;
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
 
   /* ⬅️ KEY FIXES */
   padding: 20px 24px;          /* less vertical, more horizontal */

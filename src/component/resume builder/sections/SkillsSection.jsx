@@ -1,179 +1,179 @@
-import React, { useState } from "react";
-import CommonCard from "../../common/CommonCard";
+import React, { useMemo, useState } from "react";
+import ResumeSectionCard from "../ResumeSectionCard";
 import "../resumeBuilder.css";
 
-export default function SkillsSection({ section, isExpanded, onToggle, data, onDataChange }) {
-  const [skills, setSkills] = useState(data || []);
+const skillLevels = ["Beginner", "Intermediate", "Expert"];
+
+const createEmptySkill = () => ({
+  name: "",
+  category: "",
+  level: "Intermediate",
+});
+
+export default function SkillsSection({
+  isExpanded,
+  onToggle,
+  data = [],
+  onCreate,
+  onUpdate,
+  onDelete,
+  loading,
+}) {
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState(null);
+  const [draft, setDraft] = useState(null);
 
-  const skillLevels = ["Beginner", "Intermediate", "Advanced", "Expert"];
+  const groupedSkills = useMemo(
+    () =>
+      data.reduce((accumulator, skill) => {
+        const category = skill.category || "Other";
+        if (!accumulator[category]) {
+          accumulator[category] = [];
+        }
 
-  const handleAddSkill = () => {
-    const newSkill = {
-      id: Date.now().toString(),
-      name: "",
-      level: "Intermediate",
-      category: "",
-    };
-    setFormData(newSkill);
-    setEditingId(newSkill.id);
+        accumulator[category].push(skill);
+        return accumulator;
+      }, {}),
+    [data]
+  );
+
+  const startCreate = () => {
+    setEditingId(null);
+    setDraft(createEmptySkill());
   };
 
-  const handleEditSkill = (skill) => {
-    setFormData({ ...skill });
+  const startEdit = (skill) => {
     setEditingId(skill.id);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
+    setDraft({
+      name: skill.name || "",
+      category: skill.category || "",
+      level: skill.level || "Intermediate",
     });
   };
 
-  const handleSaveSkill = () => {
-    const updatedSkills = editingId
-      ? skills.map((skill) => (skill.id === editingId ? formData : skill))
-      : [...skills, formData];
-    setSkills(updatedSkills);
-    onDataChange(updatedSkills);
+  const resetForm = () => {
     setEditingId(null);
-    setFormData(null);
+    setDraft(null);
   };
 
-  const handleDeleteSkill = (id) => {
-    const updatedSkills = skills.filter((skill) => skill.id !== id);
-    setSkills(updatedSkills);
-    onDataChange(updatedSkills);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setDraft((current) => ({
+      ...current,
+      [name]: value,
+    }));
   };
 
-  // Group skills by category
-  const skillsByCategory = skills.reduce((acc, skill) => {
-    const category = skill.category || "Other";
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(skill);
-    return acc;
-  }, {});
+  const handleSave = async () => {
+    if (!draft) {
+      return;
+    }
+
+    if (editingId) {
+      await onUpdate(editingId, draft);
+    } else {
+      await onCreate(draft);
+    }
+
+    resetForm();
+  };
 
   return (
-    <CommonCard
-      className={`resume-section-card ${isExpanded ? "expanded" : ""}`}
-      onClick={onToggle}
+    <ResumeSectionCard
+      title="Skills"
+      icon="SKL"
+      count={data.length}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      description="Categorised skills rendered as ATS-friendly text rows."
     >
-      <div className="resume-card-header">
-        <div className="resume-card-title">
-          <span className="card-icon">{section.icon}</span>
-          <h3>{section.title}</h3>
-          {skills.length > 0 && (
-            <span className="section-count">{skills.length}</span>
-          )}
-        </div>
-        <button className={`expand-arrow ${isExpanded ? "rotated" : ""}`}>
-          →
-        </button>
-      </div>
+      <div className="section-items">
+        {Object.entries(groupedSkills).map(([category, skills]) => (
+          <div key={category} className="skill-category">
+            <h5 className="category-title">{category}</h5>
+            {skills.map((skill) => (
+              <div key={skill.id} className="skill-item">
+                <div className="skill-info">
+                  <span className="skill-name">{skill.name}</span>
+                  <span className="skill-level">{skill.level || "Expert"}</span>
+                </div>
 
-      {isExpanded && (
-        <div className="resume-card-content">
-          {/* List of existing skills by category */}
-          <div className="section-items">
-            {Object.entries(skillsByCategory).map(([category, categorySkills]) => (
-              <div key={category} className="skill-category">
-                <h5 className="category-title">{category}</h5>
-                {categorySkills.map((skill) => (
-                  <div key={skill.id} className="skill-item">
-                    <div className="skill-info">
-                      <span className="skill-name">{skill.name}</span>
-                      <span className="skill-level">{skill.level}</span>
-                    </div>
-                    <div className="item-actions">
-                      <button
-                        className="btn-small btn-edit"
-                        onClick={() => handleEditSkill(skill)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn-small btn-delete"
-                        onClick={() => handleDeleteSkill(skill.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                <div className="item-actions">
+                  <button
+                    type="button"
+                    className="btn-small btn-edit"
+                    onClick={() => startEdit(skill)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-small btn-delete"
+                    onClick={() => onDelete(skill.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
+        ))}
+      </div>
 
-          {/* Edit/Add form */}
-          {editingId && formData && (
-            <div className="form-container">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Skill Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="React.js"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Category</label>
-                  <input
-                    type="text"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    placeholder="Frontend, Backend, etc."
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Proficiency Level</label>
-                <select
-                  name="level"
-                  value={formData.level}
-                  onChange={handleInputChange}
-                >
-                  {skillLevels.map((level) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="resume-card-actions">
-                <button className="btn-save" onClick={handleSaveSkill}>
-                  Save
-                </button>
-                <button
-                  className="btn-cancel"
-                  onClick={() => {
-                    setEditingId(null);
-                    setFormData(null);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
+      {draft ? (
+        <div className="form-container">
+          <div className="form-row">
+            <div className="form-group">
+              <label>Skill name</label>
+              <input
+                type="text"
+                name="name"
+                value={draft.name}
+                onChange={handleChange}
+                placeholder="TypeScript"
+              />
             </div>
-          )}
+            <div className="form-group">
+              <label>Category</label>
+              <input
+                type="text"
+                name="category"
+                value={draft.category}
+                onChange={handleChange}
+                placeholder="Languages"
+              />
+            </div>
+          </div>
 
-          {/* Add new button */}
-          {!editingId && (
-            <button className="btn-add-section" onClick={handleAddSkill}>
-              + Add Skill
+          <div className="form-group">
+            <label>Level</label>
+            <select name="level" value={draft.level} onChange={handleChange}>
+              {skillLevels.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="resume-card-actions">
+            <button
+              type="button"
+              className="btn-save"
+              onClick={handleSave}
+              disabled={loading}
+            >
+              Save
             </button>
-          )}
+            <button type="button" className="btn-cancel" onClick={resetForm}>
+              Cancel
+            </button>
+          </div>
         </div>
+      ) : (
+        <button type="button" className="btn-add-section" onClick={startCreate}>
+          + Add skill
+        </button>
       )}
-    </CommonCard>
+    </ResumeSectionCard>
   );
 }

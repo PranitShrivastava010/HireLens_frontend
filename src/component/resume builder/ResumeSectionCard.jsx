@@ -2,34 +2,44 @@ import React from "react";
 import CommonCard from "../common/CommonCard";
 import "./resumeBuilder.css";
 
-export default function ResumeSectionCard({ section, isExpanded, onToggle }) {
+export default function ResumeSectionCard({
+  title,
+  icon,
+  count,
+  isExpanded,
+  onToggle,
+  children,
+  description,
+}) {
   return (
     <CommonCard
       className={`resume-section-card ${isExpanded ? "expanded" : ""}`}
-      onClick={onToggle}
+      width="100%"
+      cursor="default"
     >
-      <div className="resume-card-header">
-        <div className="resume-card-title">
-          <span className="card-icon">{section.icon}</span>
-          <h3>{section.title}</h3>
-        </div>
-        <button className={`expand-arrow ${isExpanded ? "rotated" : ""}`}>
-          →
-        </button>
-      </div>
-
-      {isExpanded && (
-        <div className="resume-card-content">
-          <textarea
-            placeholder={`Enter your ${section.title.toLowerCase()}...`}
-            className="resume-textarea"
-          />
-          <div className="resume-card-actions">
-            <button className="btn-save">Save</button>
-            <button className="btn-cancel">Cancel</button>
+      <button
+        type="button"
+        className="resume-card-header-button"
+        onClick={onToggle}
+      >
+        <div className="resume-card-header">
+          <div className="resume-card-title">
+            <span className="card-icon">{icon}</span>
+            <div className="resume-card-title-copy">
+              <h3>{title}</h3>
+              {description ? <p>{description}</p> : null}
+            </div>
+            {typeof count === "number" ? (
+              <span className="section-count">{count}</span>
+            ) : null}
           </div>
+          <span className={`expand-arrow ${isExpanded ? "rotated" : ""}`}>
+            &gt;
+          </span>
         </div>
-      )}
+      </button>
+
+      {isExpanded ? <div className="resume-card-content">{children}</div> : null}
     </CommonCard>
   );
 }

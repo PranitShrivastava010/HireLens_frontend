@@ -1,190 +1,190 @@
 import React, { useState } from "react";
-import CommonCard from "../../common/CommonCard";
+import ResumeSectionCard from "../ResumeSectionCard";
 import "../resumeBuilder.css";
 
-export default function EducationSection({ section, isExpanded, onToggle, data, onDataChange }) {
-  const [educations, setEducations] = useState(data || []);
+const createEmptyEducation = () => ({
+  institute: "",
+  degree: "",
+  field: "",
+  startYear: "",
+  endYear: "",
+});
+
+const mapEducationToDraft = (education) => ({
+  institute: education.institute || "",
+  degree: education.degree || "",
+  field: education.field || "",
+  startYear: education.startYear || "",
+  endYear: education.endYear || "",
+});
+
+export default function EducationSection({
+  isExpanded,
+  onToggle,
+  data = [],
+  onCreate,
+  onUpdate,
+  onDelete,
+  loading,
+}) {
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState(null);
+  const [draft, setDraft] = useState(null);
 
-  const handleAddEducation = () => {
-    const newEducation = {
-      id: Date.now().toString(),
-      institute: "",
-      degree: "",
-      field: "",
-      duration: "",
-      startYear: "",
-      endYear: "",
-    };
-    setFormData(newEducation);
-    setEditingId(newEducation.id);
-  };
-
-  const handleEditEducation = (education) => {
-    setFormData({ ...education });
-    setEditingId(education.id);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name.includes("Year") ? (value ? parseInt(value) : "") : value,
-    });
-  };
-
-  const handleSaveEducation = () => {
-    const updatedEducations = editingId
-      ? educations.map((edu) => (edu.id === editingId ? formData : edu))
-      : [...educations, formData];
-    setEducations(updatedEducations);
-    onDataChange(updatedEducations);
+  const startCreate = () => {
     setEditingId(null);
-    setFormData(null);
+    setDraft(createEmptyEducation());
   };
 
-  const handleDeleteEducation = (id) => {
-    const updatedEducations = educations.filter((edu) => edu.id !== id);
-    setEducations(updatedEducations);
-    onDataChange(updatedEducations);
+  const startEdit = (education) => {
+    setEditingId(education.id);
+    setDraft(mapEducationToDraft(education));
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setDraft(null);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setDraft((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = async () => {
+    if (!draft) {
+      return;
+    }
+
+    if (editingId) {
+      await onUpdate(editingId, draft);
+    } else {
+      await onCreate(draft);
+    }
+
+    resetForm();
   };
 
   return (
-    <CommonCard
-      className={`resume-section-card ${isExpanded ? "expanded" : ""}`}
-      onClick={onToggle}
+    <ResumeSectionCard
+      title="Education"
+      icon="EDU"
+      count={data.length}
+      isExpanded={isExpanded}
+      onToggle={onToggle}
+      description="Degrees, school names, and graduation years."
     >
-      <div className="resume-card-header">
-        <div className="resume-card-title">
-          <span className="card-icon">{section.icon}</span>
-          <h3>{section.title}</h3>
-          {educations.length > 0 && (
-            <span className="section-count">{educations.length}</span>
-          )}
-        </div>
-        <button className={`expand-arrow ${isExpanded ? "rotated" : ""}`}>
-          →
-        </button>
+      <div className="section-items">
+        {data.map((education) => (
+          <div key={education.id} className="item-preview">
+            <div className="item-header">
+              <h4>{education.institute}</h4>
+              <span className="company-info">
+                {education.degree}
+                {education.field ? ` - ${education.field}` : ""}
+              </span>
+            </div>
+
+            <div className="item-actions">
+              <button
+                type="button"
+                className="btn-small btn-edit"
+                onClick={() => startEdit(education)}
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                className="btn-small btn-delete"
+                onClick={() => onDelete(education.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {isExpanded && (
-        <div className="resume-card-content">
-          {/* List of existing educations */}
-          <div className="section-items">
-            {educations.map((education) => (
-              <div key={education.id} className="item-preview">
-                <div className="item-header">
-                  <h4>{education.degree}</h4>
-                  <span className="company-info">{education.institute}</span>
-                </div>
-                <div className="item-actions">
-                  <button
-                    className="btn-small btn-edit"
-                    onClick={() => handleEditEducation(education)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn-small btn-delete"
-                    onClick={() => handleDeleteEducation(education.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+      {draft ? (
+        <div className="form-container">
+          <div className="form-group">
+            <label>Institution</label>
+            <input
+              type="text"
+              name="institute"
+              value={draft.institute}
+              onChange={handleChange}
+              placeholder="Oriental College of Technology"
+            />
           </div>
 
-          {/* Edit/Add form */}
-          {editingId && formData && (
-            <div className="form-container">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Institution</label>
-                  <input
-                    type="text"
-                    name="institute"
-                    value={formData.institute}
-                    onChange={handleInputChange}
-                    placeholder="University Name"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Degree</label>
-                  <input
-                    type="text"
-                    name="degree"
-                    value={formData.degree}
-                    onChange={handleInputChange}
-                    placeholder="Bachelor of Science"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Field of Study</label>
-                <input
-                  type="text"
-                  name="field"
-                  value={formData.field}
-                  onChange={handleInputChange}
-                  placeholder="Computer Science"
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Start Year</label>
-                  <input
-                    type="number"
-                    name="startYear"
-                    value={formData.startYear}
-                    onChange={handleInputChange}
-                    placeholder="2018"
-                    min="1950"
-                    max={new Date().getFullYear()}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>End Year</label>
-                  <input
-                    type="number"
-                    name="endYear"
-                    value={formData.endYear || ""}
-                    onChange={handleInputChange}
-                    placeholder="2022"
-                    min="1950"
-                    max={new Date().getFullYear() + 5}
-                  />
-                </div>
-              </div>
-
-              <div className="resume-card-actions">
-                <button className="btn-save" onClick={handleSaveEducation}>
-                  Save
-                </button>
-                <button
-                  className="btn-cancel"
-                  onClick={() => {
-                    setEditingId(null);
-                    setFormData(null);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Degree</label>
+              <input
+                type="text"
+                name="degree"
+                value={draft.degree}
+                onChange={handleChange}
+                placeholder="Bachelor of Technology"
+              />
             </div>
-          )}
+            <div className="form-group">
+              <label>Field</label>
+              <input
+                type="text"
+                name="field"
+                value={draft.field}
+                onChange={handleChange}
+                placeholder="Information Technology | GPA: 7.0/10"
+              />
+            </div>
+          </div>
 
-          {/* Add new button */}
-          {!editingId && (
-            <button className="btn-add-section" onClick={handleAddEducation}>
-              + Add Education
+          <div className="form-row">
+            <div className="form-group">
+              <label>Start year</label>
+              <input
+                type="number"
+                name="startYear"
+                value={draft.startYear}
+                onChange={handleChange}
+                placeholder="2021"
+              />
+            </div>
+            <div className="form-group">
+              <label>End year</label>
+              <input
+                type="number"
+                name="endYear"
+                value={draft.endYear}
+                onChange={handleChange}
+                placeholder="2025"
+              />
+            </div>
+          </div>
+
+          <div className="resume-card-actions">
+            <button
+              type="button"
+              className="btn-save"
+              onClick={handleSave}
+              disabled={loading}
+            >
+              Save
             </button>
-          )}
+            <button type="button" className="btn-cancel" onClick={resetForm}>
+              Cancel
+            </button>
+          </div>
         </div>
+      ) : (
+        <button type="button" className="btn-add-section" onClick={startCreate}>
+          + Add education
+        </button>
       )}
-    </CommonCard>
+    </ResumeSectionCard>
   );
 }
