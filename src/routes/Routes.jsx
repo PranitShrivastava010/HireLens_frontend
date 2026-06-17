@@ -11,6 +11,7 @@ import RequireJobPreferences from "./RequiredJobPreference";
 import JobPreferencePage from "../pages/JobPreferencePage";
 import StatsPage from "../pages/StatsPage";
 import ResumeBuilderContainer from "../container/resume/ResumeBuilderContainer";
+import ComingSoonPage from "../pages/ComingSoonPage";
 
 export default function Router() {
     return (
@@ -58,6 +59,10 @@ export default function Router() {
                     path="/resume"
                     element={<ResumeBuilderContainer/>}
                 />
+                <Route path="/score" element={<ComingSoonPage />} />
+                <Route path="/ai" element={<ComingSoonPage />} />
+                <Route path="/coverLetter" element={<ComingSoonPage />} />
+                <Route path="/linkedin" element={<ComingSoonPage />} />
             </Route>
         </Routes>
     )
