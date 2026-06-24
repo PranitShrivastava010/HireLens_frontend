@@ -35,6 +35,10 @@ export default function ThreeBackground() {
     );
     scene.add(mesh);
 
+    // Initial scale based on window width
+    const initialScale = window.innerWidth < 768 ? 0.6 : 1;
+    mesh.scale.set(initialScale, initialScale, initialScale);
+
     mesh.position.y = -1.2;
 
     const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -61,6 +65,9 @@ export default function ThreeBackground() {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
+      
+      const newScale = window.innerWidth < 768 ? 0.6 : 1;
+      mesh.scale.set(newScale, newScale, newScale);
     };
 
     window.addEventListener("resize", onResize);

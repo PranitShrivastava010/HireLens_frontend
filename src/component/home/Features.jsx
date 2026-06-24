@@ -7,7 +7,8 @@ export default function FeatureSection({
   title,
   subtitle,
   reverse = false,
-  highlight = []
+  highlight = [],
+  imageSrc = null
 }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: false, margin: "-120px" });
@@ -15,19 +16,10 @@ export default function FeatureSection({
   return (
     <section
       ref={ref}
-      style={{
-        minHeight: "60vh",
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        alignItems: "center",
-        padding: "0 6rem",
-        background: "#fff",
-        overflow: "hidden",
-        gap: "3rem", // reduced gap
-      }}
+      className="feature-grid"
     >
       {!reverse && (
-        <FeatureImage inView={inView} reverse={false} />
+        <FeatureImage inView={inView} reverse={false} imageSrc={imageSrc} />
       )}
 
       <FeatureContent
@@ -39,7 +31,7 @@ export default function FeatureSection({
       />
 
       {reverse && (
-        <FeatureImage inView={inView} reverse />
+        <FeatureImage inView={inView} reverse imageSrc={imageSrc} />
       )}
     </section>
   );

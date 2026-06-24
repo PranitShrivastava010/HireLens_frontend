@@ -282,22 +282,24 @@ export default function DashboardComponent({
                                 variants={fadeInOut}
                                 initial="hidden"
                                 animate="visible"
-                                width={recentApplications.length > 0 ? "35%" : "100%"}
+                                width={recentApplications.length > 0 ? "100%" : "100%"}
                             >
-                                <CardContent>
+                                <CardContent sx={{ height: 350, display: "flex", flexDirection: "column" }}>
                                     <Typography variant="h6" fontWeight={700} sx={{ color: "#fff", mb: 2 }}>
                                         Interviews
                                     </Typography>
-                                    {stats.upcomingInterviews.map((interview, index) => (
-                                        <Box key={index} sx={{ mb: 1, p: 1, borderRadius: 2, bgcolor: "rgba(0, 200, 83, 0.1)", border: "1px solid rgba(0, 200, 83, 0.2)" }}>
-                                            <Typography variant="body2" fontWeight={700} sx={{ color: "#00c853" }}>
-                                                {interview.type || "Interview"}
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)" }}>
-                                                {interview.companyName} • {formatDisplayDate(interview.date, "MMM d, h:mm a")}
-                                            </Typography>
-                                        </Box>
-                                    ))}
+                                    <Box sx={{ flexGrow: 1, overflowY: "auto", pr: 1, "&::-webkit-scrollbar": { width: "4px" }, "&::-webkit-scrollbar-thumb": { backgroundColor: "rgba(255,255,255,0.1)", borderRadius: "10px" } }}>
+                                        {stats.upcomingInterviews.map((interview, index) => (
+                                            <Box key={index} sx={{ mb: 1, p: 1, borderRadius: 2, bgcolor: "rgba(0, 200, 83, 0.1)", border: "1px solid rgba(0, 200, 83, 0.2)" }}>
+                                                <Typography variant="body2" fontWeight={700} sx={{ color: "#00c853" }}>
+                                                    {interview.type || "Interview"}
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                                                    {interview.companyName} • {formatDisplayDate(interview.date, "MMM d, h:mm a")}
+                                                </Typography>
+                                            </Box>
+                                        ))}
+                                    </Box>
                                 </CardContent>
                             </MotionCard>
                         )}
@@ -402,7 +404,7 @@ export default function DashboardComponent({
                                         dataKey="count" 
                                         fill="url(#barGradient)" 
                                         radius={[6, 6, 0, 0]} 
-                                        barSize={60}
+                                        maxBarSize={60}
                                     />
                                 </BarChart>
                             </ResponsiveContainer>

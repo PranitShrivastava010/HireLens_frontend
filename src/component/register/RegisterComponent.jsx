@@ -67,17 +67,21 @@ export default function RegisterComponent({
                 width: "100vw",
                 display: "flex",
                 overflow: "hidden",
+                position: "relative",
             }}
         >
             {/* LEFT PANEL */}
             <Box
                 sx={{
-                    position: "relative",
-                    width: "45%",
+                    position: { xs: "absolute", md: "relative" },
+                    inset: { xs: 0, md: "auto" },
+                    zIndex: { xs: 0, md: "auto" },
+                    width: { xs: "100%", md: "45%" },
+                    height: { xs: "100%", md: "auto" },
                     background: "linear-gradient(135deg, #1E2B5C, #27C4D6)",
                     color: "white",
-                    px: 6,
-                    py: 8,
+                    px: { xs: 3, md: 6 },
+                    py: { xs: 4, md: 8 },
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
@@ -89,10 +93,10 @@ export default function RegisterComponent({
                 />
 
                 {/* Content */}
-                <Box sx={{ position: "relative", zIndex: 1 }}>
-                    <Typography sx={{ fontSize: 80, opacity: 0.4 }}>“</Typography>
+                <Box sx={{ position: "relative", zIndex: 1, display: { xs: "none", sm: "block" } }}>
+                    <Typography sx={{ fontSize: { xs: 40, md: 80 }, opacity: 0.4 }}>“</Typography>
 
-                    <Typography sx={{ fontSize: 20, lineHeight: 1.6, mt: 4, fontFamily: "MyFont" }}>
+                    <Typography sx={{ fontSize: { xs: 16, md: 20 }, lineHeight: 1.6, mt: { xs: 2, md: 4 }, fontFamily: "MyFont" }}>
                         We’ve decoded the hiring process. Our portal doesn't just host jobs; it
                         prepares you to win them. By instantly scanning job requirements and
                         scoring your resume’s compatibility, we give you the data-backed edge
@@ -100,7 +104,7 @@ export default function RegisterComponent({
                     </Typography>
                 </Box>
 
-                <Box sx={{ position: "relative", zIndex: 1 }}>
+                <Box sx={{ position: "relative", zIndex: 1, display: { xs: "none", sm: "block" } }}>
                     <Typography sx={{ fontWeight: 600 }}>
                         Team HireLens
                     </Typography>
@@ -113,8 +117,12 @@ export default function RegisterComponent({
             {/* RIGHT PANEL */}
             <Box
                 sx={{
-                    width: "55%",
-                    background: "#ffffff",
+                    position: { xs: "absolute", md: "relative" },
+                    inset: { xs: 0, md: "auto" },
+                    zIndex: { xs: 1, md: "auto" },
+                    width: { xs: "100%", md: "55%" },
+                    height: { xs: "100%", md: "auto" },
+                    background: { xs: "transparent", md: "#ffffff" },
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -125,9 +133,15 @@ export default function RegisterComponent({
                     sx={{
                         width: "100%",
                         maxWidth: 420,
+                        m: { xs: 2, md: 0 },
+                        p: { xs: 1, md: 0 },
+                        borderRadius: { xs: 4, md: 0 },
+                        background: { xs: "rgba(255, 255, 255, 0.9)", md: "#ffffff" },
+                        backdropFilter: { xs: "blur(10px)", md: "none" },
+                        boxShadow: { xs: "0 10px 40px rgba(0,0,0,0.3)", md: "none" },
                     }}
                 >
-                    <CardContent>
+                    <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                         <Box
                             component="img"
                             src="/hr text+logo.png" // replace with your public folder image
@@ -135,12 +149,12 @@ export default function RegisterComponent({
                             sx={{
                                 width: 120, // adjust as needed
                                 height: "auto",
-                                display: "block",
+                                display: { xs: "none", md: "block" },
                                 mx: "auto",
                                 mb: -3,
                             }}
                         />
-                        <Typography variant="h4" sx={{ mb: 3, fontFamily: "Heading", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <Typography variant="h4" sx={{ mb: { xs: 1, md: 3 }, mt: { xs: 1, md: 0 }, fontFamily: "Heading", display: "flex", alignItems: "center", justifyContent: "center" }}>
                             {heading}
                         </Typography>
 

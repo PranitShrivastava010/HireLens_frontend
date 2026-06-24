@@ -222,7 +222,6 @@ export default function JobsList({
           filter: searchOpen ? "blur(3px)" : "none",
           pointerEvents: "auto",
           transition: "0.3s",
-          mr: { xs: 2, sm: 0 }
         }}
       >
         <Box

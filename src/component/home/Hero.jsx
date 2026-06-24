@@ -7,19 +7,7 @@ import ThreeBackground from "../common/ThreeBackground";
 
 export default function Hero() {
   return (
-    <section
-      style={{
-        position: "relative",
-        minHeight: "100vh",
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        alignItems: "center",
-        padding: "0 6rem",
-        background: "white",
-        overflow: "hidden",
-        // marginTop: "5%"
-      }}
-    >
+    <section className="hero-grid">
       <ThreeBackground/>
       {/* Gradient overlay */}
       <div
@@ -34,13 +22,13 @@ export default function Hero() {
         }}
       />
 
-      <div style={{ position: "relative", zIndex: 1, marginTop: "10%" }}>
+      <div className="hero-text" style={{ position: "relative", zIndex: 1, marginTop: "10%" }}>
         <HeroHeadline />
         <HeroSubtitle />
         <CommonButton color={"black"} text={"Get Started"} />
       </div>
 
-      <div style={{ position: "relative", zIndex: 1, marginTop: "10%" }}>
+      <div className="hero-image" style={{ position: "relative", zIndex: 1, marginTop: "10%" }}>
         <HeroVisual />
       </div>
     </section>

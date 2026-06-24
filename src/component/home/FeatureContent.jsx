@@ -10,7 +10,7 @@ export default function FeatureContent({
     const fromX = reverse ? -160 : 160;
 
     return (
-        <div style={{ order: reverse ? 1 : 2 }}>
+        <div className="feature-text">
             <Motion.h2
                 initial={{
                     x: fromX,

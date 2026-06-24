@@ -66,13 +66,23 @@ export default function HomeContainer() {
                     subtitle="Instantly extract and rank job requirements by priority. We turn dense descriptions into a clear checklist for success."
                     reverse={false}
                     highlight={["AI-Powered"]}
+                    imageSrc="/ai_keyword_extraction.png"
                 />
 
                 <FeatureSection
-                    title="Make Your Resume ATS-Visible"
-                    subtitle="Our AI scans your resume against the job description to reveal your ATS score. Uncover missing points and optimize your profile for maximum impact."
+                    title="Make Your Resume ATS-Friendly"
+                    subtitle="Craft the perfect resume using precise Layout Controls. Tune spacing, margins, and section density in real-time with our Live A4 Preview to ensure your profile stands out and flawlessly passes any ATS scan."
                     reverse={true}
-                    highlight={["ATS-Visible"]}
+                    highlight={["ATS-Friendly", "Layout Controls"]}
+                    imageSrc="/resume_builder_ui.png"
+                />
+
+                <FeatureSection
+                    title="Track Your Job Hunt Effortlessly"
+                    subtitle="Stay completely organized with our intuitive Kanban board. Effortlessly drag and drop job applications across custom stages—from Saved to Interview to Offer—so you never miss a vital opportunity."
+                    reverse={false}
+                    highlight={["Effortlessly"]}
+                    imageSrc="/job_tracker_ui.png"
                 />
             </Box>
             <Box>
@@ -81,15 +91,7 @@ export default function HomeContainer() {
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true, margin: "-120px" }}
-                    style={{
-                        position: "relative",
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                        gap: "2rem",
-                        padding: "5rem 6rem",
-                        background: "linear-gradient(135deg, #1E2B5C, #27C4D6)",
-                        overflow: "hidden",
-                    }}
+                    className="home-card-grid"
                 >
                     <div
                         style={{
