@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import CommonButton from "../common/CommonButton";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function RegisterComponent({
     type = "register",
@@ -22,6 +23,7 @@ export default function RegisterComponent({
     step,
     otp,
     setOtp,
+    googleLogin
 }) {
 
     const navigate = useNavigate()
@@ -144,7 +146,7 @@ export default function RegisterComponent({
                     <CardContent sx={{ p: { xs: 2, md: 3 } }}>
                         <Box
                             component="img"
-                            src="/hr text+logo.png" // replace with your public folder image
+                            src="/hr_text_logo.png" // replace with your public folder image
                             alt="HireLens Logo"
                             sx={{
                                 width: 120, // adjust as needed
@@ -160,13 +162,19 @@ export default function RegisterComponent({
 
                         {(type === "login" || (type === "register" && step === 1)) && (
                             <>
-                                <Button
-                                    fullWidth
-                                    variant="outlined"
-                                    sx={{ mb: 2, py: 1.2, borderRadius: 2 }}
+                                <GoogleLogin
+                                    width="100%"
+                                    onSuccess={(credentialResponse) => {
+                                        console.log("Google Success", credentialResponse);
+                                        if(credentialResponse.credential){
+                                            googleLogin(credentialResponse.credential)
+                                        }
+                                    }}
+                                    onError={() => {
+                                        console.log("Google Login Failed")
+                                    }}
                                 >
-                                    Continue with Google
-                                </Button>
+                                </GoogleLogin>
                                 <Divider sx={{ my: 2 }}>OR</Divider>
                             </>
                         )}

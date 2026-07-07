@@ -18,11 +18,19 @@ export default function Router() {
         <Routes>
             <Route
                 path="/"
-                element={<HomePage />}
+                element={
+                    <AuthRedirect>
+                        <HomePage />
+                    </AuthRedirect>
+                }
             />
             <Route
                 path="/register"
-                element={<RegisterPage />}
+                element={
+                    <AuthRedirect>
+                        <RegisterPage />
+                    </AuthRedirect>
+                }
             />
             <Route
                 path="/login"

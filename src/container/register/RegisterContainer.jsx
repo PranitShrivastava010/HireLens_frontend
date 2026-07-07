@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import RegisterComponent from "../../component/register/RegisterComponent";
 import { useNavigate } from "react-router-dom";
-import { useRegisterMutation, useVerifyOtpMutation } from "../../features/auth/authApi";
+import { useGoogleLoginMutation, useRegisterMutation, useVerifyOtpMutation } from "../../features/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../features/auth/authSlice";
 
@@ -12,6 +12,7 @@ export default function RegisterContainer() {
 
     const [register, { isLoading: registerIsLoading, error: registerIsError }] = useRegisterMutation()
     const [verifyOtp, { isLoading: verifyIsLoading, error: verifyIsError }] = useVerifyOtpMutation()
+    const [googleLogin] = useGoogleLoginMutation()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -56,6 +57,22 @@ export default function RegisterContainer() {
         }
     }
 
+    const handleGoogleLogin = async(idToken) => {
+        try {
+            const res = await googleLogin(idToken).unwrap()
+
+            dispatch(
+                setCredentials({
+                    user: res.Result.sendUser,
+                    accessToken: res.Result.accessToken
+                })
+            );
+            navigate("/jobs")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <RegisterComponent
             formData={formData}
@@ -67,6 +84,7 @@ export default function RegisterContainer() {
             step={step}
             otp={otp}
             setOtp={setOtp}
+            googleLogin={handleGoogleLogin}
         />
     )
 }

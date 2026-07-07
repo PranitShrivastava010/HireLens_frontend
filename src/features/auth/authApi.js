@@ -29,6 +29,16 @@ export const authApi = rtkApi.injectEndpoints({
                 method: "POST",
             }),
         }),
+        googleLogin: builder.mutation({
+            query: (idToken) => ({
+                url: "/api/auth/google",
+                method: 'POST',
+                body: {
+                    idToken
+                },
+                credentials: "include"
+            })
+        }),
     }),
 });
 
@@ -36,5 +46,6 @@ export const {
     useRegisterMutation,
     useVerifyOtpMutation,
     useLoginMutation,
-    useRefreshTokenMutation
+    useRefreshTokenMutation,
+    useGoogleLoginMutation
 } = authApi;
