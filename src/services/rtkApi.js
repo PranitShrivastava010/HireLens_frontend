@@ -77,6 +77,14 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const rtkApi = createApi({
   reducerPath: "rtkApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["ResumePreview", "DashboardStats", "Applications"],
+  tagTypes: [
+    "ResumePreview",
+    "DashboardStats",
+    "Applications",
+    "OutreachCompanies",
+    "OutreachContacts",
+    "OutreachDiscoveryQueues",
+    "OutreachAnalytics",
+  ],
   endpoints: () => ({}),
 });
