@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography, Avatar, IconButton, Divider, Grid, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Tooltip as MuiTooltip } from "@mui/material";
+import { Box, Card, CardContent, Typography, Avatar, IconButton, Divider, Grid, Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Tooltip as MuiTooltip, useTheme, useMediaQuery } from "@mui/material";
 import { motion } from "framer-motion";
 import React, { useState } from "react";
 import {
@@ -71,6 +71,8 @@ export default function DashboardComponent({
     stats,
     onUpdateGoal
 }) {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [isGoalOpen, setIsGoalOpen] = useState(false);
     const [newGoal, setNewGoal] = useState(stats?.weeklyProgress?.weeklyGoal || 10);
 
@@ -232,13 +234,13 @@ export default function DashboardComponent({
                             <Typography variant="h6" fontWeight={700} sx={{ mb: 2, color: "#fff" }}>
                                 Application Status
                             </Typography>
-                            <Box sx={{ display: "flex", height: "calc(100% - 40px)", alignItems: "center" }}>
-                                <ResponsiveContainer width="60%" height="100%">
+                            <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, height: "calc(100% - 40px)", alignItems: "center", justifyContent: "center" }}>
+                                <ResponsiveContainer width={isMobile ? "100%" : "55%"} height={isMobile ? 220 : "100%"}>
                                     <PieChart>
                                         <Pie
                                             data={statusSummaryData}
-                                            innerRadius={60}
-                                            outerRadius={100}
+                                            innerRadius={isMobile ? 50 : 60}
+                                            outerRadius={isMobile ? 80 : 100}
                                             paddingAngle={5}
                                             dataKey="value"
                                             stroke="none"
@@ -253,9 +255,9 @@ export default function DashboardComponent({
                                         />
                                     </PieChart>
                                 </ResponsiveContainer>
-                                <Box sx={{ width: "40%", pl: 2 }}>
+                                <Box sx={{ width: { xs: "100%", sm: "45%" }, pl: { xs: 0, sm: 2 }, mt: { xs: 2, sm: 0 }, display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
                                     {statusSummaryData.map((entry, index) => (
-                                        <Box key={entry.key} sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                                        <Box key={entry.key} sx={{ display: "flex", alignItems: "center", mb: 1.5, width: { xs: "50%", sm: "100%" } }}>
                                             <Box sx={{ width: 12, height: 12, borderRadius: "50%", bgcolor: STATUS_COLORS[entry.key] || "#888", mr: 1.5 }} />
                                             <Box sx={{ flexGrow: 1 }}>
                                                 <Typography variant="caption" sx={{ color: "rgba(255, 255, 255, 0.5)", display: "block", lineHeight: 1 }}>

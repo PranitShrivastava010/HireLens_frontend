@@ -162,19 +162,21 @@ export default function RegisterComponent({
 
                         {(type === "login" || (type === "register" && step === 1)) && (
                             <>
-                                <GoogleLogin
-                                    width="100%"
-                                    onSuccess={(credentialResponse) => {
-                                        console.log("Google Success", credentialResponse);
-                                        if(credentialResponse.credential){
-                                            googleLogin(credentialResponse.credential)
-                                        }
-                                    }}
-                                    onError={() => {
-                                        console.log("Google Login Failed")
-                                    }}
-                                >
-                                </GoogleLogin>
+                                <Box sx={{ width: "100%", '& > div': { width: "100% !important" } }}>
+                                    <GoogleLogin
+                                        width="100%"
+                                        onSuccess={(credentialResponse) => {
+                                            console.log("Google Success", credentialResponse);
+                                            if(credentialResponse.credential){
+                                                googleLogin(credentialResponse.credential)
+                                            }
+                                        }}
+                                        onError={() => {
+                                            console.log("Google Login Failed")
+                                        }}
+                                    >
+                                    </GoogleLogin>
+                                </Box>
                                 <Divider sx={{ my: 2 }}>OR</Divider>
                             </>
                         )}

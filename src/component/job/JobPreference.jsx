@@ -19,6 +19,8 @@ export default function JobPreference({
   onSubmit,
   loading,
 }) {
+  const hasSkills = selected.some(item => item?.type === "skill");
+
   return (
     <Box
       sx={{
@@ -132,8 +134,8 @@ export default function JobPreference({
                   {...params}
                   placeholder={
                     selected.length === 0
-                      ? "e.g. React, Backend Developer"
-                      : ""
+                      ? "e.g. React, Node.js, Backend Developer"
+                      : "Search for more roles or skills..."
                   }
                   sx={{
                     "& .MuiOutlinedInput-root": {
@@ -160,11 +162,17 @@ export default function JobPreference({
               )}
             />
 
+            {!hasSkills && selected.length > 0 && (
+              <Typography variant="body2" sx={{ color: "#ef4444", mt: 2, fontWeight: 600 }}>
+                * Please select at least one skill to proceed (e.g., React, Node.js, Python).
+              </Typography>
+            )}
+
             <Button
               variant="contained"
               fullWidth={false}
               onClick={onSubmit}
-              disabled={!selected || selected.length === 0 || loading}
+              disabled={!selected || selected.length === 0 || !hasSkills || loading}
               sx={{
                 mt: 4,
                 px: 6,
