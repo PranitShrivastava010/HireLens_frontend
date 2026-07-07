@@ -39,6 +39,13 @@ export const authApi = rtkApi.injectEndpoints({
                 credentials: "include"
             })
         }),
+        logoutUser: builder.mutation({
+            query: () => ({
+                url: "/api/auth/logout",
+                method: "POST",
+                credentials: "include"
+            }),
+        }),
     }),
 });
 
@@ -47,5 +54,6 @@ export const {
     useVerifyOtpMutation,
     useLoginMutation,
     useRefreshTokenMutation,
-    useGoogleLoginMutation
+    useGoogleLoginMutation,
+    useLogoutUserMutation
 } = authApi;

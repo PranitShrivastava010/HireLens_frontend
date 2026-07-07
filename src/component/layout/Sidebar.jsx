@@ -17,6 +17,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import PsychologyIcon from "@mui/icons-material/Psychology";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 260;
 
@@ -33,7 +34,7 @@ const iconMap = {
 
 const MotionListItemButton = Motion(ListItemButton);
 
-export default function Sidebar({ menuItems, activePath, onNavigate }) {
+export default function Sidebar({ menuItems, activePath, onNavigate, onLogout }) {
   const normalizedActivePath = activePath.split("?")[0].replace(/\/$/, "");
 
   return (
@@ -121,6 +122,35 @@ export default function Sidebar({ menuItems, activePath, onNavigate }) {
           );
         })}
       </List>
+
+      {/* Logout Button */}
+      <Box sx={{ mt: "auto", px: 1, pb: 1 }}>
+        <ListItem disablePadding>
+          <MotionListItemButton
+            onClick={onLogout}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            sx={{
+              mx: 1,
+              borderRadius: "12px",
+              px: 2,
+              py: 1.2,
+              color: "#ff4d4f",
+              fontWeight: 500,
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 36, color: "#ff4d4f" }}>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Logout"
+              primaryTypographyProps={{
+                sx: { fontWeight: 500, fontSize: "0.95rem" },
+              }}
+            />
+          </MotionListItemButton>
+        </ListItem>
+      </Box>
 
       {/* Glow pulse keyframes */}
       <style>
