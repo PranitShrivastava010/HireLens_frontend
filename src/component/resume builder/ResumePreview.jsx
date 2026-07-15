@@ -72,7 +72,7 @@ const displayLinkText = (url, fallback = "") => {
 const splitProjectDescription = (description) =>
   description
     .split(/\r?\n/)
-    .map((line) => line.replace(/^[\-\u2022]\s*/, "").trim())
+    .map((line) => line.replace(/^[-\u2022]\s*/, "").trim())
     .filter(Boolean);
 
 const shallowEqual = (left, right) => {
@@ -521,6 +521,124 @@ export default function ResumePreview({
     "--resume-bullet-spacing": `${layoutSettings.bulletSpacing}px`,
   };
 
+  const pagesRef = useRef(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    const pagesEl = pagesRef.current;
+    if (!pagesEl || isExporting) return;
+
+    setIsExporting(true);
+
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const { jsPDF } = await import("jspdf");
+
+      await document.fonts.ready;
+
+      const origin = window.location.origin;
+      const fontFaceCSS = `
+        @font-face {
+          font-family: "MyFont";
+          src: url("${origin}/jakarta.woff2") format("woff2");
+          font-weight: normal; font-style: normal;
+        }
+        @font-face {
+          font-family: "Heading";
+          src: url("${origin}/clash.woff2") format("woff2");
+          font-weight: bold; font-style: normal;
+        }
+      `;
+
+      // True A4 dimensions at 96 DPI
+      const A4_PX_W = 794;
+      const A4_PX_H = 1123;
+      const A4_W_MM = 210;
+      const A4_H_MM = 297;
+
+      const sourcePages = pagesEl.querySelectorAll(".resume-page");
+      if (!sourcePages.length) return;
+
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+      for (let i = 0; i < sourcePages.length; i++) {
+        const sourcePage = sourcePages[i];
+        const contentEl = sourcePage.querySelector(".resume-page-content");
+        if (!contentEl) continue;
+
+        // --- Build an off-screen container at exact A4 pixel size ---
+        // Appending to the live document means all CSS class rules apply
+        // automatically — no need to copy stylesheets.
+        const offscreen = document.createElement("div");
+        offscreen.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: -9999px;
+          width: ${A4_PX_W}px;
+          background: white;
+          z-index: -1000;
+          overflow: visible;
+        `;
+
+        // Copy all CSS custom properties from the source .resume-page inline
+        // style onto the offscreen wrapper so they cascade to the clone below.
+        const sourceInlineStyle = sourcePage.getAttribute("style") || "";
+        const cssVarPattern = /(--[\w-]+)\s*:\s*([^;]+)/g;
+        let match;
+        while ((match = cssVarPattern.exec(sourceInlineStyle)) !== null) {
+          offscreen.style.setProperty(match[1].trim(), match[2].trim());
+        }
+
+        // Clone just the white .resume-page-content and clean it up
+        const contentClone = contentEl.cloneNode(true);
+        contentClone.style.borderRadius = "0";
+        contentClone.style.boxShadow = "none";
+        contentClone.style.minHeight = `${A4_PX_H}px`;
+        contentClone.style.width = "100%";
+
+        offscreen.appendChild(contentClone);
+        document.body.appendChild(offscreen);
+
+        // Let the browser reflow the newly inserted element
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+        try {
+          const canvas = await html2canvas(offscreen, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: "#ffffff",
+            logging: false,
+            width: A4_PX_W,
+            height: A4_PX_H,
+            onclone: (clonedDoc) => {
+              // Inject font-face declarations into the cloned iframe document
+              const style = clonedDoc.createElement("style");
+              style.textContent = fontFaceCSS;
+              clonedDoc.head.appendChild(style);
+            },
+          });
+
+          const imgData = canvas.toDataURL("image/jpeg", 0.98);
+          if (i > 0) pdf.addPage();
+          pdf.addImage(imgData, "JPEG", 0, 0, A4_W_MM, A4_H_MM);
+        } finally {
+          // Always clean up the off-screen node
+          document.body.removeChild(offscreen);
+        }
+      }
+
+      const baseName = (resumeData?.basics?.fullName || "Resume")
+        .replace(/\s+/g, "_");
+
+      pdf.save(`${baseName}.pdf`);
+    } catch (err) {
+      console.error("PDF export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="resume-preview-wrapper resume-preview-print-root">
       <div className="preview-header">
@@ -541,9 +659,10 @@ export default function ResumePreview({
           <button
             type="button"
             className="download-btn"
-            onClick={() => window.print()}
+            disabled={isExporting}
+            onClick={handleDownloadPdf}
           >
-            Print / Save PDF
+            {isExporting ? "Generating PDF…" : "Download PDF"}
           </button>
         </div>
       </div>
@@ -565,7 +684,7 @@ export default function ResumePreview({
         </div>
       </div>
 
-      <div className="resume-preview-pages">
+      <div className="resume-preview-pages" ref={pagesRef}>
         {pages.map((pageBlocks, pageIndex) => (
           <div key={`page-${pageIndex + 1}`} className="resume-page" style={paperStyle}>
             <div className="resume-page-number">Page {pageIndex + 1}</div>

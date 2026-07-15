@@ -206,6 +206,17 @@
   font-weight: 600;
 }
 
+.url-field-error {
+  color: rgba(255, 110, 110, 0.95);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -885,50 +896,5 @@
   }
 }
 
-@media print {
-  body * {
-    visibility: hidden;
-  }
 
-  .resume-preview-print-root,
-  .resume-preview-print-root * {
-    visibility: visible;
-  }
 
-  .resume-preview-print-root {
-    position: absolute;
-    inset: 0;
-    padding: 0;
-    margin: 0;
-    background: white;
-  }
-
-  .preview-header,
-  .resume-page-number,
-  .resume-measure-stage {
-    display: none !important;
-  }
-
-  .resume-preview-pages {
-    gap: 0;
-  }
-
-  .resume-page {
-    max-width: none;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    border-radius: 0;
-    page-break-after: always;
-  }
-
-  .resume-page:last-child {
-    page-break-after: auto;
-  }
-
-  .resume-page-content {
-    min-height: auto;
-    border-radius: 0;
-    box-shadow: none;
-  }
-}

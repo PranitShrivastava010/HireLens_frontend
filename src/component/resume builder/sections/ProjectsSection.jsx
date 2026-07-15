@@ -66,6 +66,7 @@ export default function ProjectsSection({
         .map((tech) => tech.trim())
         .filter(Boolean),
       link: draft.link,
+      dateLabel: draft.dateLabel || null,
     };
 
     if (editingId) {

@@ -212,7 +212,7 @@ export default function ExperienceSection({
           <div className="form-group">
             <label>Impact bullets</label>
             {draft.bullets.map((bullet, index) => (
-              <div key={`${index}-${bullet}`} className="bullet-input-group">
+              <div key={index} className="bullet-input-group">
                 <input
                   type="text"
                   value={bullet}

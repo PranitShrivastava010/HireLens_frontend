@@ -19,6 +19,24 @@ const createInitialState = (data, customLinks) => ({
     })) || [],
 });
 
+// Returns an error string if the URL is non-empty but missing protocol.
+const getUrlError = (value) => {
+  if (!value || value.trim() === "") return "";
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("http://") && !trimmed.startsWith("https://")) {
+    return 'Add "https://" at the start — e.g. https://linkedin.com/in/you';
+  }
+  return "";
+};
+
+// Prepend https:// to bare URLs before sending to the backend validator.
+const normalizeUrl = (value) => {
+  if (!value || value.trim() === "") return "";
+  const trimmed = value.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://${trimmed}`;
+};
+
 export default function BasicsCard({
   isExpanded,
   onToggle,
@@ -30,31 +48,33 @@ export default function BasicsCard({
   const [formState, setFormState] = useState(
     createInitialState(data, customLinks)
   );
+  const [urlErrors, setUrlErrors] = useState({ linkedin: "", github: "" });
 
   useEffect(() => {
     setFormState(createInitialState(data, customLinks));
+    setUrlErrors({ linkedin: "", github: "" });
   }, [customLinks, data]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormState((current) => ({
-      ...current,
-      [name]: value,
-    }));
+    setFormState((current) => ({ ...current, [name]: value }));
+    // Clear error while the user is actively typing
+    if (name === "linkedin" || name === "github") {
+      setUrlErrors((current) => ({ ...current, [name]: "" }));
+    }
+  };
+
+  // Validate URL fields on blur so user sees error after leaving the field
+  const handleUrlBlur = (event) => {
+    const { name, value } = event.target;
+    setUrlErrors((current) => ({ ...current, [name]: getUrlError(value) }));
   };
 
   const handleCustomLinkChange = (index, field, value) => {
     setFormState((current) => {
       const nextLinks = [...current.customLinks];
-      nextLinks[index] = {
-        ...nextLinks[index],
-        [field]: value,
-      };
-
-      return {
-        ...current,
-        customLinks: nextLinks,
-      };
+      nextLinks[index] = { ...nextLinks[index], [field]: value };
+      return { ...current, customLinks: nextLinks };
     });
   };
 
@@ -63,11 +83,7 @@ export default function BasicsCard({
       ...current,
       customLinks: [
         ...current.customLinks,
-        {
-          id: `custom-link-${Date.now()}`,
-          label: "",
-          url: "",
-        },
+        { id: `custom-link-${Date.now()}`, label: "", url: "" },
       ],
     }));
   };
@@ -75,17 +91,33 @@ export default function BasicsCard({
   const handleRemoveCustomLink = (index) => {
     setFormState((current) => ({
       ...current,
-      customLinks: current.customLinks.filter((_, itemIndex) => itemIndex !== index),
+      customLinks: current.customLinks.filter((_, i) => i !== index),
     }));
   };
 
   const handleSave = async () => {
-    await onSave(formState);
+    // Final validation — block save if URLs are malformed
+    const linkedinError = getUrlError(formState.linkedin);
+    const githubError = getUrlError(formState.github);
+    if (linkedinError || githubError) {
+      setUrlErrors({ linkedin: linkedinError, github: githubError });
+      return;
+    }
+
+    // Normalize bare URLs before sending to backend (e.g. "linkedin.com/..." → "https://...")
+    const normalizedState = {
+      ...formState,
+      linkedin: normalizeUrl(formState.linkedin),
+      github: normalizeUrl(formState.github),
+    };
+
+    await onSave(normalizedState);
     onToggle();
   };
 
   const handleCancel = () => {
     setFormState(createInitialState(data, customLinks));
+    setUrlErrors({ linkedin: "", github: "" });
     onToggle();
   };
 
@@ -165,25 +197,39 @@ export default function BasicsCard({
           />
         </div>
         <div className="form-group">
-          <label>LinkedIn</label>
+          <label>
+            LinkedIn
+            {urlErrors.linkedin && (
+              <span className="url-field-error">{urlErrors.linkedin}</span>
+            )}
+          </label>
           <input
-            type="url"
+            type="text"
             name="linkedin"
             value={formState.linkedin}
             onChange={handleInputChange}
+            onBlur={handleUrlBlur}
             placeholder="https://linkedin.com/in/your-handle"
+            style={urlErrors.linkedin ? { borderColor: "rgba(255,100,100,0.7)" } : {}}
           />
         </div>
       </div>
 
       <div className="form-group">
-        <label>GitHub</label>
+        <label>
+          GitHub
+          {urlErrors.github && (
+            <span className="url-field-error">{urlErrors.github}</span>
+          )}
+        </label>
         <input
-          type="url"
+          type="text"
           name="github"
           value={formState.github}
           onChange={handleInputChange}
+          onBlur={handleUrlBlur}
           placeholder="https://github.com/your-handle"
+          style={urlErrors.github ? { borderColor: "rgba(255,100,100,0.7)" } : {}}
         />
       </div>
 
@@ -212,7 +258,7 @@ export default function BasicsCard({
             <div className="form-group">
               <label>URL</label>
               <input
-                type="url"
+                type="text"
                 value={link.url}
                 onChange={(event) =>
                   handleCustomLinkChange(index, "url", event.target.value)
