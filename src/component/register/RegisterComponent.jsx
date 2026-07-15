@@ -23,7 +23,8 @@ export default function RegisterComponent({
     step,
     otp,
     setOtp,
-    googleLogin
+    googleLogin,
+    loading
 }) {
 
     const navigate = useNavigate()
@@ -48,8 +49,9 @@ export default function RegisterComponent({
                 ? "Welcome"
                 : "Verify OTP";
 
-    const buttonText =
-        type === "login"
+    const buttonText = loading
+        ? "Loading please wait..."
+        : type === "login"
             ? "Login"
             : step === 1
                 ? "Register"

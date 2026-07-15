@@ -72,7 +72,7 @@ export default function HomeNavbar() {
             <img
               src="./hrLogo.png"
               alt="logo"
-              style={{ width: 100, height: 100 }}
+              style={{ width: 30, height: 30 }}
             />
           </div>
 
